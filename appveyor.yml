@@ -1,0 +1,20 @@
+os: Windows Server 2012
+nuget:
+  account_feed: true
+
+init:
+  - git config --global core.autocrlf true
+
+install:
+ - cmd: nuget sources add -Name api.nuget.org -Source https://api.nuget.org/v3/index.json
+ - ps: "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
+ - ps: dnvm update-self
+ - ps: dnvm upgrade
+ - ps: dnvm use 1.0.0-rc1-update1
+
+before_build:
+ - ps: dnu restore
+
+test_script:
+- ps: dnu build ./test/WCS.TEST/project.json
+- ps: dnx -p ./test/WCS.TEST test

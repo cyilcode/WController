@@ -1,0 +1,27 @@
+{
+  "version": "1.0.0-0",
+  "description": "Wireless Control Server Application",
+  "authors": [ "Cem YILMAZ" ],
+  "tags": [ "wcs, wireless, control, server" ],
+  "projectUrl": "https://github.com/sharkdeed/WirelessControl",
+  "licenseUrl": "https://github.com/sharkdeed/WirelessControl/blob/master/LICENSE",
+
+  "dependencies": {
+    "NAudio": "1.7.3"
+  },
+
+  "compilationOptions": {"emitEntryPoint": true},
+
+  "commands": {
+    "WCS.MAIN": "WCS.MAIN"
+  },
+
+  "frameworks": {
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.Drawing": "4.0.0.0",
+        "System.Windows.Forms": "4.0.0.0"
+      }
+    }
+  }
+}
