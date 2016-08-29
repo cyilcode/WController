@@ -27,8 +27,8 @@ namespace WCS.TEST
                     Skip += " " + NO_MASTER_MIXER;
                 //if (id == OS.LINUX && !checkALSA())
                 //    Skip += " " + NO_ALSA;
-                if (id == OS.LINUX && !checkSoundCard())
-                    Skip += " " + NO_SOUND_CARD;
+                //if (id == OS.LINUX && !checkSoundCard())
+                //    Skip += " " + NO_SOUND_CARD;
             }
             if (requiresDesktop && !isDesktop())
                 Skip += " " + NO_DESKTOP;
