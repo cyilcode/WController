@@ -25,8 +25,8 @@ namespace WCS.TEST
                     Skip += " " + WRONG_PLATFORM;
                 if (id == OS.WINDOWS && !masterMixerEnabled())
                     Skip += " " + NO_MASTER_MIXER;
-                if (id == OS.LINUX && !checkALSA())
-                    Skip += " " + NO_ALSA;
+                //if (id == OS.LINUX && !checkALSA())
+                //    Skip += " " + NO_ALSA;
                 if (id == OS.LINUX && !checkSoundCard())
                     Skip += " " + NO_SOUND_CARD;
             }
