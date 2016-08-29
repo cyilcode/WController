@@ -1,8 +1,7 @@
-﻿using Functions;
-using NAudio.CoreAudioApi;
-using System;
+﻿using NAudio.CoreAudioApi;
 using System.Diagnostics;
 using System.IO;
+using WCS.MAIN.Functions;
 using WCS.MAIN.Globals;
 using Xunit;
 
@@ -39,11 +38,10 @@ namespace WCS.TEST
                File.Exists("/usr/lib/x86_64-linux-gnu/libasound.so.2")
             || File.Exists("/usr/lib/i386-linux-gnu/libasound.so.2");
 
-        /*To be honest, since i'm a moron, i didn't even considered the fact that the machine that runs the test,
+        /*To be honest, since i'm a moron, i didn't even conside the fact that the machine that runs the test,
           may not even have a sound card. So i need to check on that too.*/
         private bool checkSoundCard()
         {
-            /*To do that, we need to set a function to execute bash commands*/
             var startInfo = new ProcessStartInfo();
             startInfo.FileName = "arecord";
             startInfo.Arguments = "-l";
@@ -76,7 +74,7 @@ namespace WCS.TEST
 
         private bool isDesktop()
         {
-            var function = new crossPlatformFunctions();
+            var function = new linuxFunctions();
             var exp = Record.Exception(() => function.getMousePosition());
             if (exp != null && exp.HResult == NODESKTOP_HRESULT)
                 return false;

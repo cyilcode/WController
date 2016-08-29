@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using WCS.MAIN.Globals;
 using WCS.MAIN.Interfaces;
 
@@ -163,5 +165,9 @@ namespace WCS.MAIN.Functions
                 ErrorCode = ALSAERRCODE.FIND_SELEM;
             return IntPtr.Zero;
         }
+
+        public Point getMousePosition() => Cursor.Position;
+
+        public void setMousePosition(Point mousePoint) => Cursor.Position = mousePoint;
     }
 }

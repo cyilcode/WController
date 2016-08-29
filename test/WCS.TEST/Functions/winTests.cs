@@ -2,6 +2,8 @@
 using Functions;
 using NAudio.CoreAudioApi;
 using System;
+using System.Drawing;
+using System.Windows.Forms;
 using WCS.MAIN.Globals;
 using WCS.MAIN.Interfaces;
 using Xunit;
@@ -10,14 +12,12 @@ namespace WCS.TEST
 {
     public class winTests
     {
-          /* Q: Why IFunctions here rather than a direct windowsFunction ?
-             
-           */
-
-        private readonly IFunctions winFunctions = new windowsFunctions();
+        private readonly IFunctions winFunctions    = new windowsFunctions();
         private readonly MMDeviceEnumerator devices = new MMDeviceEnumerator();
-        private const float WINDOWS_TEN_PERCENT = 1.6f;
-        private const string Category = "Windows Functions Validations.";
+        private const float WINDOWS_TEN_PERCENT     = 1.6f;
+        private const byte TEST_X                   = 200;
+        private const byte TEST_Y                   = 200;
+        private const string Category               = "Windows Functions Validations.";
 
         [CompatibleFact(OS.WINDOWS, false), Trait("Category", Category)]
         public void VolumeDownBy_turns_volume_down_by_value()
@@ -77,6 +77,23 @@ namespace WCS.TEST
                 Assert.NotEqual(mixerState, defaultDevice().AudioEndpointVolume.Mute);
             else
                 Assert.Equal(mixerState, defaultDevice().AudioEndpointVolume.Mute);
+        }
+
+        /* Mouse cursor should not be moving while testing this function.
+            It would be very hard to make it fail but just in case. */
+        [CompatibleFact(OS.WINDOWS, true), Trait("Category", Category)]
+        public void getMousePosition_returns_correct_position()
+        {
+            var cpfPosition = winFunctions.getMousePosition();
+            Assert.Equal(Cursor.Position, cpfPosition);
+        }
+
+        [CompatibleFact(OS.WINDOWS, true), Trait("Category", Category)]
+        public void setMousePosition_sets_mouse_to_correct_position()
+        {
+            var newPoint = new Point(TEST_X, TEST_Y);
+            winFunctions.setMousePosition(newPoint);
+            Assert.Equal(Cursor.Position, newPoint);
         }
 
         private MMDevice defaultDevice() => devices.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);

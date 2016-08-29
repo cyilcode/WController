@@ -1,6 +1,8 @@
 ﻿#if DNX451
 using WCS.MAIN.Interfaces;
 using NAudio.CoreAudioApi;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace Functions
 {
@@ -40,6 +42,10 @@ namespace Functions
         public void muteMixer() => defaultSoundDevice.AudioEndpointVolume.Mute = true;
 
         public void unmuteMixer() => defaultSoundDevice.AudioEndpointVolume.Mute = false;
+
+        public Point getMousePosition() => Cursor.Position;
+
+        public void setMousePosition(Point mousePoint) => Cursor.Position = mousePoint;
     }
 }
 #endif
