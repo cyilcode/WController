@@ -4,8 +4,6 @@ mono:
   - latest
 before_install:
   - sudo apt-get update
-  - sudo apt-get install libasound2-data
-  - sudo apt-get install libc6
   - sudo apt-get install libasound2
   - sudo apt-get install libasound2-dev
 install:
