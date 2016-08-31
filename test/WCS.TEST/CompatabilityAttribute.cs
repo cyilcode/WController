@@ -9,13 +9,14 @@ namespace WCS.TEST
 {
     public class CompatibleFactAttribute : FactAttribute
     {
-        private readonly OS platform;
-        private const int NODESKTOP_HRESULT = -2146233036;
-        private const string WRONG_PLATFORM = "Your platform is not suitable for this test !";
-        private const string NO_MASTER_MIXER = "Couldn't find a master mixer !";
-        private const string NO_DESKTOP = "Your platform doesn't have a desktop !";
-        private const string NO_ALSA = "Linux Audio Tests requires AlsaMixer and libraries.";
-        private const string NO_SOUND_CARD = "Your system doesn't have a soundcard.";
+        private const string WRONG_PLATFORM             = "Your platform is not suitable for this test !";
+        private const string NO_MASTER_MIXER            = "Couldn't find a master mixer !";
+        private const string NO_DESKTOP                 = "Your platform doesn't have a desktop !";
+        private const string NO_ALSA                    = "Linux Audio Tests requires AlsaMixer and libraries.";
+        private const string NO_SOUND_CARD              = "Your system doesn't have a soundcard.";
+        private const int    NODESKTOP_HRESULT          = -2146233036;
+        private readonly     OS platform;
+
         public CompatibleFactAttribute(OS id, bool requiresDesktop)
         {
             platform = id;
@@ -38,8 +39,6 @@ namespace WCS.TEST
                File.Exists("/usr/lib/x86_64-linux-gnu/libasound.so.2")
             || File.Exists("/usr/lib/i386-linux-gnu/libasound.so.2");
 
-        /*To be honest, since i'm a moron, i didn't even conside the fact that the machine that runs the test,
-          may not even have a sound card. So i need to check on that too.*/
         private bool checkSoundCard()
         {
             var startInfo = new ProcessStartInfo();

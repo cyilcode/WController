@@ -9,58 +9,77 @@ namespace WCS.MAIN.Functions
 {
     public class linuxFunctions : IFunctions
     {
-        private IntPtr mixerHandle = IntPtr.Zero;
-        private const string defaultSoundCard = "default";
-        private const string mixerName = "Master";
-        private const sbyte MODE_DEFAULT = 0;
-        private const sbyte RANGE_MINIMUM = 0;
-        private const sbyte RANGE_MAXIMUM = 1;
-        private const sbyte RANGE_PERCENT_MAX = 100;
-        private const sbyte RANGE_PERCENT_MIN = 0;
-        private const sbyte INVALID_RANGE = -1;
-        private const sbyte PERCENT = 100;
-        private const sbyte ROUND = 1;
-        private const sbyte ALSA_SUCCESS = 0;
-        private const int INDEX_ZERO = 0;
-        private const int SND_MIXER_SCHN_FRONT_LEFT = 1;
-        private const int MUTE_MIXER = 0;
-        private const int UNMUTE_MIXER = 1;
-        private int ret = 0;
+        private IntPtr              mixerHandle                        = IntPtr.Zero; // Main mixer handle
+        private const string        defaultSoundCard                   = "default";
+        private const string        mixerName                          = "Master";
+        private const sbyte         MODE_DEFAULT                       = 0;           // Open mode
+        private const sbyte         RANGE_MINIMUM                      = 0;           // Scalar minimum level
+        private const sbyte         RANGE_MAXIMUM                      = 1;           // Scalar maximum level
+        private const sbyte         RANGE_PERCENT_MAX                  = 100;
+        private const sbyte         RANGE_PERCENT_MIN                  = 0;
+        private const sbyte         INVALID_RANGE                      = -1;
+        private const sbyte         PERCENT                            = 100;
+        private const sbyte         ROUND                              = 1;
+        private const sbyte         ALSA_SUCCESS                       = 0;
+        private const int           INDEX_ZERO                         = 0;
+        private const int           SND_MIXER_SCHN_FRONT_LEFT          = 1;
+        private const int           MUTE_MIXER                         = 0;
+        private const int           UNMUTE_MIXER                       = 1;
+        private int                 ret                                = 0;
         public ALSAERRCODE ErrorCode { get; set; }
+
         /*
+          More information on : http://www.alsa-project.org/alsa-doc/alsa-lib/files.html
+          Please refer to the link above for more information on these functions aswell.
           libasound2 P/Invoke.
           PKG Required: libasound2-dev
          */
+
         [DllImport("libasound.so.2")]
         static extern int snd_mixer_open(ref IntPtr mixer, int mode);
+
         [DllImport("libasound.so.2")]
         static extern int snd_mixer_attach(IntPtr handle, string soundcard);
+
         [DllImport("libasound.so.2")]
         static extern int snd_mixer_selem_register(IntPtr mixer, IntPtr options, IntPtr classp);
+
         [DllImport("libasound.so.2")]
         static extern int snd_mixer_load(IntPtr mixer);
+
         [DllImport("libasound.so.2")]
         static extern void snd_mixer_selem_id_malloc(ref IntPtr ptr);
+
         [DllImport("libasound.so.2")]
         static extern void snd_mixer_selem_id_set_index(IntPtr obj, uint val);
+
         [DllImport("libasound.so.2")]
         static extern void snd_mixer_selem_id_set_name(IntPtr handle, string val);
+
         [DllImport("libasound.so.2")]
         static extern IntPtr snd_mixer_find_selem(IntPtr mixer, IntPtr id);
+
         [DllImport("libasound.so.2")]
         static extern int snd_mixer_selem_get_playback_volume_range(IntPtr elem, ref long min, ref long max);
+
         [DllImport("libasound.so.2")]
         static extern int snd_mixer_selem_set_playback_volume_all(IntPtr elem, long value);
+
         [DllImport("libasound.so.2")]
         static extern int snd_mixer_selem_has_playback_switch(IntPtr elem);
+
         [DllImport("libasound.so.2")]
         static extern int snd_mixer_selem_get_playback_switch(IntPtr elem, int channel, ref int value);
+
         [DllImport("libasound.so.2")]
         static extern int snd_mixer_selem_set_playback_switch_all(IntPtr elem, int value);
+
         [DllImport("libasound.so.2")]
         static extern int snd_mixer_close(IntPtr mixer);
+
         [DllImport("libasound.so.2")]
         static extern int snd_mixer_selem_get_playback_volume(IntPtr elem, int channel, ref long value);
+
 
         public float GetVolumeLevel()
         {
@@ -79,7 +98,7 @@ namespace WCS.MAIN.Functions
             if (!hasSwitch) return false; // TODO: Expand behaviour.
             ret = snd_mixer_selem_get_playback_switch(mixer, SND_MIXER_SCHN_FRONT_LEFT, ref val);
             if (ret != ALSA_SUCCESS) { ErrorCode = ALSAERRCODE.GET_PLAYBACK_SWITCH; return false; }
-            /* get_playback_switch returns the status of the toggle. If its on(not muted, returns 1)
+            /* get_playback_switch returns the status of the toggle. If it retuns 1 means mixer is not muted.
                To make it same with windows and mac osx. If we get 0, that means mixer is muted and we should return true.
                Basically, we reversed the return data. 
              */
