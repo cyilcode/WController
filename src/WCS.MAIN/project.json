@@ -3,14 +3,14 @@
   "description": "Wireless Control Server Application",
   "authors": [ "Cem YILMAZ" ],
   "tags": [ "wcs, wireless, control, server" ],
-  "projectUrl": "https://github.com/sharkdeed/WirelessControl",
-  "licenseUrl": "https://github.com/sharkdeed/WirelessControl/blob/master/LICENSE",
+  "projectUrl": "https://github.com/cyilcode/WController",
+  "licenseUrl": "https://github.com/cyilcode/WController/blob/master/LICENSE",
 
   "dependencies": {
     "NAudio": "1.7.3"
   },
 
-  "compilationOptions": {"emitEntryPoint": true},
+  "compilationOptions": { "emitEntryPoint": true },
 
   "commands": {
     "WCS.MAIN": "WCS.MAIN"

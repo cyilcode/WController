@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using WCS.MAIN.Interfaces;
 
 namespace WCS.MAIN.Functions
@@ -34,8 +35,10 @@ namespace WCS.MAIN.Functions
          * In here we pass the str -> hex -> decimal values.
          * Ex: 'volm' -> (hex)0x766f6c6d -> (decimal)1987013741 */
 
+        public  const int       MIXER_MAX_VOL                    = 100;          // Max scalar value
+        public  const int       MIXER_MIN_VOL                    = 100;          // Min scalar value
         private const int       NO_QUALIFIER                     = 0;            // A UInt32 indicating the size of the buffer pointed to by inQualifierData. Note that not all properties require qualification, in which case thisvalue will be 0.
-        private const int       OBJ_SYSTEM_OBJ                   = 1;            //The AudioObjectID that always refers to the one and only instance of the AudioSystemObject class.
+        private const int       OBJ_SYSTEM_OBJ                   = 1;            // The AudioObjectID that always refers to the one and only instance of the AudioSystemObject class.
         private const uint      PROP_ELEM_MASTER                 = 0;            // 0
         private const uint      PROP_ELEM_S_CHANNEL_F            = 1;            // Default device sound channels
         private const uint      PROP_ELEM_S_CHANNEL_S            = 2;            // Default device sound channels
@@ -77,9 +80,14 @@ namespace WCS.MAIN.Functions
 
         public osxFunctions()
         {
+            DEFAULT_DEVICE = get_mixer();
+        }
+
+        private uint get_mixer()
+        {
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_DEF_DEV,
-                                            PROP_SCOPE_GLOBAL,
-                                            PROP_ELEM_MASTER);
+                                PROP_SCOPE_GLOBAL,
+                                PROP_ELEM_MASTER);
             SIZE = sizeof(uint);
             byte[] deviceIDBuffer = new byte[SIZE];
             AudioObjectGetPropertyData(OBJ_SYSTEM_OBJ,
@@ -91,11 +99,11 @@ namespace WCS.MAIN.Functions
             uint deviceID = BitConverter.ToUInt32(deviceIDBuffer, 0);
             if (deviceID <= FUNCTION_FAIL)
             {
-                DEFAULT_DEVICE = (uint)FUNCTION_FAIL_RET;
+                return (uint)FUNCTION_FAIL_RET;
                 // TODO: Log !
             }
             else
-                DEFAULT_DEVICE = deviceID;
+               return deviceID;
         }
 
         public float GetVolumeLevel()
@@ -111,7 +119,7 @@ namespace WCS.MAIN.Functions
                                        IntPtr.Zero,
                                        ref SIZE,
                                        volumeBuffer);
-            return BitConverter.ToSingle(volumeBuffer, 0);
+            return (float)(Math.Round(BitConverter.ToSingle(volumeBuffer, 0), 0) * 100);
         }
 
         public bool isMixerMuted()
@@ -194,15 +202,9 @@ namespace WCS.MAIN.Functions
                                        mixerVolumeLevel);
         }
 
-        public Point getMousePosition()
-        {
-            throw new NotImplementedException();
-        }
+        public Point getMousePosition() => Cursor.Position;
 
-        public void setMousePosition(Point mousePoint)
-        {
-            throw new NotImplementedException();
-        }
+        public void setMousePosition(Point mousePoint) => Cursor.Position = mousePoint;
 #endif
     }
 }

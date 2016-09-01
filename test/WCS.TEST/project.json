@@ -3,8 +3,8 @@
   "description": "Wireless Control Server Test Project",
   "authors": [ "Cem YILMAZ" ],
   "tags": [ "wcs, wireless, control, server" ],
-  "projectUrl": "https://github.com/sharkdeed/WirelessControl",
-  "licenseUrl": "https://github.com/sharkdeed/WirelessControl/blob/master/LICENSE",
+  "projectUrl": "https://github.com/cyilcode/WController",
+  "licenseUrl": "https://github.com/cyilcode/WController/blob/master/LICENSE",
 
   "dependencies": {
     "xunit": "2.1.0",

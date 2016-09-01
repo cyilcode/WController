@@ -15,7 +15,7 @@ namespace WCS.TEST.linFunctions
         private const sbyte RANGE_PERCENT_MAX           = 100;
         private const sbyte RANGE_PERCENT_MIN           = 0;
         private const sbyte LINUX_TEN_PERCENT           = 10;
-        private const string Category                   = "Linux Functions test";
+        private const string Category                   = "Linux Functions tests";
 
         [CompatibleFact(OS.LINUX, false), Trait("Category", Category)]
         public void getMixer_returns_pointer()
@@ -124,9 +124,9 @@ namespace WCS.TEST.linFunctions
             else
             {
                 linFunctions.muteMixer();
-                Assert.Equal(switchStatus, linFunctions.isMixerMuted());
-                linFunctions.unmuteMixer();
                 Assert.NotEqual(switchStatus, linFunctions.isMixerMuted());
+                linFunctions.unmuteMixer();
+                Assert.Equal(switchStatus, linFunctions.isMixerMuted());
             }
         }
     }
