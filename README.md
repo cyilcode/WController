@@ -30,6 +30,14 @@ After you get done with packages, download/clone this repo and execute these com
  
 ```curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh ```
 
+A little warning: this script creates a little problem. You might wanna remove the line about dnvm from your .profile file to your .bashrc file. These both files should be at your home directory(don't forget to turn on the option to see hidden files). Also, if you dont have a .bashrc file; 
+
+make sure you are executing the command on your home directory and use this: 
+
+```touch .bashrc```
+
+Now you can continue
+
 ```dnvm upgrade ```
 
 get to the WController main directory
