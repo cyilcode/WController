@@ -93,7 +93,7 @@ namespace WCS.TEST.linFunctions
         }
 
         [CompatibleFact(OS.LINUX, false), Trait("Category", Category)]
-        public void unmuteMixer_mutes_the_mixer()
+        public void unmuteMixer_unmutes_the_mixer()
         {
             Assert.Equal(ALSAERRCODE.NONE, linFunctions.ErrorCode);
             var switchStatus = linFunctions.isMixerMuted();

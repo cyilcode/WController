@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace WCS.MAIN.Globals
 {
     public class GlobalHelper
     {
         // Some distros throw this instead of the values in the Platform enum.
-        private const byte LINUX_IS_BEING_A_DICK = 128;
+        private const byte   LINUX_IS_BEING_A_DICK      = 128;
+        private const string LOG_FILE_PATH              = "error.log";
         public void coloredLine(string message, ConsoleColor color)
         {
             Console.ForegroundColor = color;
@@ -25,6 +28,16 @@ namespace WCS.MAIN.Globals
                 default:
                     return OS.WINDOWS;
             }
+        }
+
+        // This should stay here but i'm not gonna use this yet.
+        public static void log(string log_message)
+        {
+            var trace = new StackTrace().GetFrame(1).GetMethod();
+            string location = string.Format("[{0} / {1}]", trace.DeclaringType.Name, trace.Name);
+            string format = string.Format("[{0}] - {1} - on function: {2}",DateTime.Now, log_message, location);
+            // TODO: File checking
+            File.AppendAllText(LOG_FILE_PATH, format);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace WCS.MAIN.Functions
         private IntPtr              mixerHandle                        = IntPtr.Zero; // Main mixer handle
         private const string        defaultSoundCard                   = "default";
         private const string        mixerName                          = "Master";
+        private const string        LIBASOUND_LIB_PATH                 = "libasound.so.2";
         private const sbyte         MODE_DEFAULT                       = 0;           // Open mode
         private const sbyte         RANGE_MINIMUM                      = 0;           // Scalar minimum level
         private const sbyte         RANGE_MAXIMUM                      = 1;           // Scalar maximum level
@@ -35,49 +36,49 @@ namespace WCS.MAIN.Functions
           PKG Required: libasound2-dev
          */
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_open(ref IntPtr mixer, int mode);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_attach(IntPtr handle, string soundcard);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_selem_register(IntPtr mixer, IntPtr options, IntPtr classp);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_load(IntPtr mixer);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern void snd_mixer_selem_id_malloc(ref IntPtr ptr);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern void snd_mixer_selem_id_set_index(IntPtr obj, uint val);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern void snd_mixer_selem_id_set_name(IntPtr handle, string val);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern IntPtr snd_mixer_find_selem(IntPtr mixer, IntPtr id);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_selem_get_playback_volume_range(IntPtr elem, ref long min, ref long max);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_selem_set_playback_volume_all(IntPtr elem, long value);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_selem_has_playback_switch(IntPtr elem);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_selem_get_playback_switch(IntPtr elem, int channel, ref int value);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_selem_set_playback_switch_all(IntPtr elem, int value);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_close(IntPtr mixer);
 
-        [DllImport("libasound.so.2")]
+        [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_selem_get_playback_volume(IntPtr elem, int channel, ref long value);
 
 
