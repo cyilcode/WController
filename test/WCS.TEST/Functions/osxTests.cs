@@ -39,6 +39,7 @@ namespace WCS.TEST.Functions
         public void GetVolumeLevel_gets_the_correct_value()
         {
             float level = osxFnc.GetVolumeLevel();
+            Assert.NotEqual((float)osxFnc.FUNCTION_FAIL_RET, level);
             // If the function succeeds we always get a value between 0 - 100. Above or below that is not valid.
             Assert.Equal(true, (level >= osxFunctions.MIXER_MIN_VOL) &&
                                (level <= osxFunctions.MIXER_MAX_VOL));
@@ -48,6 +49,7 @@ namespace WCS.TEST.Functions
         public void VolumeDownBy_turns_volume_down_by_value()
         {
             float cur_vol = osxFnc.GetVolumeLevel();
+            Assert.NotEqual((float)osxFnc.FUNCTION_FAIL_RET, cur_vol);
             osxFnc.VolumeDownBy(VOLUME_TO_SET);
             float expected_vol = cur_vol - VOLUME_TO_SET;
             Assert.Equal(expected_vol, osxFnc.GetVolumeLevel());
@@ -57,6 +59,7 @@ namespace WCS.TEST.Functions
         public void VolumeUpBy_turns_volume_up_by_value()
         {
             float cur_vol = osxFnc.GetVolumeLevel();
+            Assert.NotEqual((float)osxFnc.FUNCTION_FAIL_RET, cur_vol);
             osxFnc.VolumeUpBy(VOLUME_TO_SET);
             float expected_vol = cur_vol + VOLUME_TO_SET;
             Assert.Equal(expected_vol, osxFnc.GetVolumeLevel());

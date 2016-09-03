@@ -51,7 +51,7 @@ namespace WCS.MAIN.Functions
         private const string    LIB_PATH                         = "/System/Library/Frameworks/AudioUnit.framework/AudioUnit"; // P/Invoke lib.
         private       uint      SIZE                             = 0;            // A global var to prevent redefiniton
         private readonly uint   DEFAULT_DEVICE                   = 0;            // global deviceID
-        private readonly object FUNCTION_FAIL_RET                = -1337;        // WController function fail ret. TODO: MORE ID'S.
+        public  readonly object FUNCTION_FAIL_RET                = -1337;        // WController function fail ret. TODO: MORE ID'S.
 
         [DllImport(LIB_PATH)]
         private static extern int AudioObjectGetPropertyData
@@ -113,12 +113,13 @@ namespace WCS.MAIN.Functions
                                                         PROP_ELEM_S_CHANNEL_S);
             SIZE = sizeof(float);
             byte[] volumeBuffer = new byte[SIZE];
-            AudioObjectGetPropertyData(DEFAULT_DEVICE,
-                                       ref objAdr,
-                                       NO_QUALIFIER,
-                                       IntPtr.Zero,
-                                       ref SIZE,
-                                       volumeBuffer);
+            int ret = AudioObjectGetPropertyData(DEFAULT_DEVICE,
+                                                 ref objAdr,
+                                                 NO_QUALIFIER,
+                                                 IntPtr.Zero,
+                                                 ref SIZE,
+                                                 volumeBuffer);
+            if (ret == FUNCTION_FAIL) return (float)FUNCTION_FAIL_RET;
             return (float)(Math.Round(BitConverter.ToSingle(volumeBuffer, 0), 0) * 100);
         }
 
