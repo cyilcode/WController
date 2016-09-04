@@ -4,6 +4,7 @@ namespace WCS.MAIN.Interfaces
 {
     public interface IFunctions
     {
+        #region SoundControllers
         /// <summary>
         /// Turns down the volume of the master mixer by the float amount.
         /// </summary>
@@ -32,6 +33,7 @@ namespace WCS.MAIN.Interfaces
         /// Unmutes the master mixer.
         /// </summary>
         void unmuteMixer();
+        #endregion
         /// <summary>
         /// Returns X,Y coordinates of the mouse cursor.
         /// </summary>
@@ -42,5 +44,10 @@ namespace WCS.MAIN.Interfaces
         /// </summary>
         /// <param name="mousePoint">Mouse position to set</param>
         void setMousePosition(Point mousePoint);
+        /// <summary>
+        /// Sends the full key event(key press, down, up) to active window
+        /// </summary>
+        /// <param name="key">Key to send</param>
+        void sendKeyStroke(string key);
     }
 }

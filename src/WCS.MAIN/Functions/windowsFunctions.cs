@@ -3,6 +3,7 @@ using WCS.MAIN.Interfaces;
 using NAudio.CoreAudioApi;
 using System.Drawing;
 using System.Windows.Forms;
+using System;
 
 namespace Functions
 {
@@ -46,6 +47,8 @@ namespace Functions
         public Point getMousePosition() => Cursor.Position;
 
         public void setMousePosition(Point mousePoint) => Cursor.Position = mousePoint;
+
+        public void sendKeyStroke(string key) => SendKeys.SendWait(key); // How i love .net devs...
     }
 }
 #endif

@@ -206,6 +206,11 @@ namespace WCS.MAIN.Functions
         public Point getMousePosition() => Cursor.Position;
 
         public void setMousePosition(Point mousePoint) => Cursor.Position = mousePoint;
+
+        public void sendKeyStroke(string key)
+        {
+            throw new NotImplementedException();
+        }
 #endif
     }
 }
