@@ -10,7 +10,7 @@ Wireless control is a cross-platform server module for remote applications that 
 
 # How to install and run ?
 
-Currently, WController is not operational. However, if you want to get into the developmental stage you need to download prerequisites for your platform
+Currently, WController is not operational yet. However, if you want to get into the developmental stage you need to download prerequisites for your platform
 
 **Windows**
 
@@ -18,42 +18,31 @@ On windows you don't have that much of a work. You can follow [this](https://blo
 
 **Linux**
 
-Linux needs a few packages to work:
+Setup on linux is fairly simple
 
-* libasound2-data
-* libasound2
-* libasound2-dev
-* mono-complete
-* curl
+* Clone this repository
+* Open up a terminal and get into the WController main directory
+* Execute ```chmod x+ linux_installscript.sh``` to assign proper permissions to setup script
+* Just simply execute ```./linux_installscript.sh``` and done !!
 
-After you get done with packages, download/clone this repo and execute these commands on your terminal
+now you can build or run the program with:
+ ```dnu build ./src/WCS.MAIN/project.json ``` to build or  ```dnx -p ./src/WCS.MAIN ``` to run.
+or you can build or run the test project with:
+ ```dnu build ./test/WCS.TEST/project.json ``` to build or  ```dnx -p ./test/WCS.TEST test ``` to run.
  
-```curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh ```
+**WARNING**
+There is a bug on dnvm bash script that messes up your .profile file on your home directory. To fix this:
 
-A little warning: this script creates a little problem. You might wanna remove the line about dnvm from your .profile file to your .bashrc file. These both files should be at your home directory(don't forget to turn on the option to see hidden files). Also, if you dont have a .bashrc file; 
+* Go to your HOME directory and enable hidden files
+* Find this line ```[ -s "/home/username/.dnx/dnvm/dnvm.sh" ] && . "/home/username/.dnx/dnvm/dnvm.sh" # Load dnvm``` and cut it(dont delete it).
+* Find your .bashrc file on the same directory. If you don't have a .bashrc file, just simply execute ```sudo touch .bashrc``` on your HOME directory. This will create a .bashrc file. Open it with a text editor.
+* Now paste the line from .profile that you cut earlier.
+* Save both files and done !
 
-make sure you are executing the command on your home directory and use this: 
-
-```touch .bashrc```
-
-Now you can continue
-
-```dnvm upgrade ```
-
-get to the WController main directory
-
-```dnu restore ```
-
-now you can build or run the program with
-
-```dnu build ./src/WCS.MAIN/project.json ```to build or ```dnx -p ./src/WCS.MAIN``` to run.
-
-or you can build or run the test project with: 
-
-```dnu build ./test/WCS.TEST/project.json``` to build or ```dnx -p ./test/WCS.TEST test``` to run.
+I'll be adding an automated solution for this issue to the install script.
 
 **OSX**
 
 Coming soon
 
-# Development Progress - 25%
+# Development Progress - 28%
