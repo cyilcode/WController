@@ -29,17 +29,6 @@ now you can build or run the program with:
  ```dnu build ./src/WCS.MAIN/project.json ``` to build or  ```dnx -p ./src/WCS.MAIN ``` to run.
 or you can build or run the test project with:
  ```dnu build ./test/WCS.TEST/project.json ``` to build or  ```dnx -p ./test/WCS.TEST test ``` to run.
- 
-**WARNING**
-There is a bug on dnvm bash script that messes up your .profile file on your home directory. To fix this:
-
-* Go to your HOME directory and enable hidden files
-* Find this line ```[ -s "/home/username/.dnx/dnvm/dnvm.sh" ] && . "/home/username/.dnx/dnvm/dnvm.sh" # Load dnvm``` and cut it(dont delete it).
-* Find your .bashrc file on the same directory. If you don't have a .bashrc file, just simply execute ```sudo touch .bashrc``` on your HOME directory. This will create a .bashrc file. Open it with a text editor.
-* Now paste the line from .profile that you cut earlier.
-* Save both files and done !
-
-I'll be adding an automated solution for this issue to the install script.
 
 **OSX**
 
