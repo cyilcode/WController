@@ -26,8 +26,11 @@ Setup on linux is fairly simple
 * Just simply execute ```./linux_installscript.sh``` and done !!
 
 now you can build or run the program with:
+
  ```dnu build ./src/WCS.MAIN/project.json ``` to build or  ```dnx -p ./src/WCS.MAIN ``` to run.
+ 
 or you can build or run the test project with:
+
  ```dnu build ./test/WCS.TEST/project.json ``` to build or  ```dnx -p ./test/WCS.TEST test ``` to run.
 
 **OSX**
