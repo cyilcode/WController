@@ -5,23 +5,31 @@ using System.Windows.Forms;
 using WCS.MAIN.Globals;
 using WCS.MAIN.Interfaces;
 
+#region typedefs
+// not needed at all but i always wanted to use these badboys :)
+using xdo_t  = System.IntPtr;
+using Window = System.UInt64;
+#endregion
+
 namespace WCS.MAIN.Functions
 {
     public class linuxFunctions : IFunctions
     {
-        private IntPtr              mixerHandle                        = IntPtr.Zero; // Main mixer handle
+        private IntPtr              mixerHandle                        = IntPtr.Zero;           // Main mixer handle
         private const string        defaultSoundCard                   = "default";
         private const string        mixerName                          = "Master";
         private const string        LIBASOUND_LIB_PATH                 = "libasound.so.2";
-        private const sbyte         MODE_DEFAULT                       = 0;           // Open mode
-        private const sbyte         RANGE_MINIMUM                      = 0;           // Scalar minimum level
-        private const sbyte         RANGE_MAXIMUM                      = 1;           // Scalar maximum level
+        private const string        LIBXDO_LIB_PATH                    = "libxdo.so.3";
+        private const sbyte         MODE_DEFAULT                       = 0;                     // Open mode
+        private const sbyte         RANGE_MINIMUM                      = 0;                     // Scalar minimum level
+        private const sbyte         RANGE_MAXIMUM                      = 1;                     // Scalar maximum level
         private const sbyte         RANGE_PERCENT_MAX                  = 100;
         private const sbyte         RANGE_PERCENT_MIN                  = 0;
         private const sbyte         INVALID_RANGE                      = -1;
         private const sbyte         PERCENT                            = 100;
         private const sbyte         ROUND                              = 1;
         private const sbyte         ALSA_SUCCESS                       = 0;
+        private const sbyte         LIBXDO_SUCCESS                     = 0;
         private const int           INDEX_ZERO                         = 0;
         private const int           SND_MIXER_SCHN_FRONT_LEFT          = 1;
         private const int           MUTE_MIXER                         = 0;
@@ -29,12 +37,14 @@ namespace WCS.MAIN.Functions
         private int                 ret                                = 0;
         public ALSAERRCODE ErrorCode { get; set; }
 
+        #region ALSAPINVOKE
+
         /*
-          More information on : http://www.alsa-project.org/alsa-doc/alsa-lib/files.html
-          Please refer to the link above for more information on these functions aswell.
-          libasound2 P/Invoke.
-          PKG Required: libasound2-dev
-         */
+            More information on : http://www.alsa-project.org/alsa-doc/alsa-lib/files.html
+            Please refer to the link above for more information on these functions aswell.
+            libasound2 P/Invoke.
+            PKG Required: libasound2-dev
+        */
 
         [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_open(ref IntPtr mixer, int mode);
@@ -80,7 +90,55 @@ namespace WCS.MAIN.Functions
 
         [DllImport(LIBASOUND_LIB_PATH)]
         static extern int snd_mixer_selem_get_playback_volume(IntPtr elem, int channel, ref long value);
+        #endregion
 
+        #region LIBXDOPINVOKE
+
+        /*
+             More information is no where because this library doesn't have a up to date online documentation.
+             At least the ones that i've found were either for python wrappers or deprecated.
+             Instead refer here: https://github.com/jordansissel/xdotool
+         */
+
+        /// <summary>
+        /// Create a new xdo_t instance.
+        /// </summary>
+        /// <param name="display">Display the string display name, such as ":0". If null, uses the environment variable DISPLAY just like XOpenDisplay(NULL).</param>
+        /// <returns>Pointer to a new xdo_t or NULL on failure</returns>
+        [DllImport(LIBXDO_LIB_PATH)]
+        static extern xdo_t xdo_new(string display);
+
+        /// <summary>
+        /// Get the currently-active window.
+        /// Requires your window manager to support this. Uses _NET_ACTIVE_WINDOW from the EWMH spec.
+        /// </summary>
+        /// <param name="xdo">xdo_t instance</param>
+        /// <param name="window_ret">window_ret	Pointer to Window where the active window is stored</param>
+        /// <returns>0 on success.(obviously not zero on fail lel)</returns>
+        [DllImport(LIBXDO_LIB_PATH)]
+        static extern int xdo_get_active_window(xdo_t xdo, out Window window_ret);
+
+        /// <summary>
+        /// Send a keysequence to the specified window.
+        /// This allows you to send keysequences by symbol name. Any combination of X11 KeySym names separated by '+' are valid. Single KeySym names are valid, too.
+        /// Examples: "l" "semicolon" "alt+Return" "Alt_L+Tab"
+        /// If you want to type a string, such as "Hello world." you want to instead use xdo_enter_text_window.
+        /// </summary>
+        /// <param name="xdo">xdo_t instance</param>
+        /// <param name="window_ret">The window you want to send the keysequence to or CURRENTWINDOW(0)</param>
+        /// <param name="keysequence">The string keysequence to send</param>
+        /// <param name="delay">The delay between keystrokes in microseconds</param>
+        /// <returns>0 on success.(obviously not zero on fail lel)</returns>
+        [DllImport(LIBXDO_LIB_PATH)]
+        static extern int xdo_enter_text_window(xdo_t xdo, Window window_ret, string keysequence, uint delay = 12000);
+
+        /// <summary>
+        /// Free and destroy an xdo_t instance.
+        /// </summary>
+        /// <param name="xdo">xdo_t instance</param>
+        [DllImport(LIBXDO_LIB_PATH)]
+        static extern void xdo_free(xdo_t xdo); 
+        #endregion
 
         public float GetVolumeLevel()
         {
@@ -192,7 +250,22 @@ namespace WCS.MAIN.Functions
 
         public void sendKeyStroke(string key)
         {
-            throw new NotImplementedException();
+            /*
+                This function is great unless it sucks.
+                Cuz of reasons that i'm not really sure yet, xdo_enter_text_window acts really weird on Turkish characters
+                or in general, non ASCI characters. I assume the function reacts unicodes as unicoRNS since its performance gets better
+                as the function delay increases. Will check on that but for now, libxdo is a lot more viable solution than coding an X11 shared lib
+                by myself.
+             */
+            Window w_ret;
+            xdo_t mXDO = xdo_new(":0"); // basically a NULL
+            ret = xdo_get_active_window(mXDO, out w_ret);
+            if (ret != LIBXDO_SUCCESS)
+                GlobalHelper.log("xdo_get_active_window failed with errcode: " + ret); // please don't judge me.
+            ret = xdo_enter_text_window(mXDO, w_ret, key);
+            if (ret != LIBXDO_SUCCESS)
+                GlobalHelper.log("xdo_enter_text_window failed with errcode: " + ret); // please don't judge me.
+            xdo_free(mXDO);
         }
     }
 }
