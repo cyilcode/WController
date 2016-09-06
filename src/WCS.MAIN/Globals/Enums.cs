@@ -25,6 +25,10 @@
         MACOSX = 2,
         CROSSPLATFORM = 3
     }
+    /// <summary>
+    /// Why this while alsa functions throw their own error codes ? 
+    /// I've added these for the developmental reasons. They act like typedefs of the real error codes.
+    /// </summary>
     public enum ALSAERRCODE
     {
         NONE,

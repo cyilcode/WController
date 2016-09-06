@@ -3,16 +3,46 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WCS.MAIN.Interfaces;
+#region typedefs
+using CGEventRef  = System.IntPtr;
+using __notused__ = System.String;
+using System.Text;
+#endregion
 
 namespace WCS.MAIN.Functions
 {
     public class osxFunctions : IFunctions
     {
 #if DNX451
+
+        public  const int       MIXER_MAX_VOL                    = 100;          // Max scalar value
+        public  const int       MIXER_MIN_VOL                    = 100;          // Min scalar value
+        private const int       NO_QUALIFIER                     = 0;            // A UInt32 indicating the size of the buffer pointed to by inQualifierData. Note that not all properties require qualification, in which case thisvalue will be 0.
+        private const int       OBJ_SYSTEM_OBJ                   = 1;            // The AudioObjectID that always refers to the one and only instance of the AudioSystemObject class.
+        private const uint      PROP_ELEM_MASTER                 = 0;            // 0
+        private const uint      PROP_ELEM_S_CHANNEL_F            = 1;            // Default device sound channels
+        private const uint      PROP_ELEM_S_CHANNEL_S            = 2;            // Default device sound channels
+        private const uint      PROP_SCOPE_GLOBAL                = 1735159650;   // 'glob'
+        private const uint      PROP_SCOPE_OUTPUT                = 1869968496;   // 'outp'
+        private const uint      PROP_SELECTOR_DEF_DEV            = 1682929012;   // 'dOut'
+        private const uint      PROP_SELECTOR_VOL_SCA            = 1987013741;   // 'volm'
+        private const uint      PROP_SELECTOR_VOL_MUTE           = 1836414053;   // 'mute'
+        private const uint      FUNCTION_FAIL                    = 0;            // Basically a function fail const
+        private const uint      CARBON_NO_KEY                    = 0;            // Carbon event no key init.
+        private const uint      KCGHIDEEVENTTAP                  = 0;            // Event tapping point
+        private const bool      CARBON_KEYDOWN                   = true;         // Flag to init the event as Keydown
+        private const string    CORE_AUDIO_LIB_PATH              = "AudioUnit.framework/AudioUnit";         // Core Audio P/Invoke lib.
+        private const string    CARBON_LIB_PATH                  = "Carbon.framework/Versions/A/Carbon";    // Carbon P/Invoke lib.
+        private       uint      SIZE                             = 0;            // A global var to prevent redefiniton
+        private readonly uint   DEFAULT_DEVICE                   = 0;            // global deviceID
+        public  readonly object FUNCTION_FAIL_RET                = -1337;        // WController function fail ret. TODO: MORE ID'S.
+
+        #region CoreAudio
         /* P/Invoke to CoreAudio and CoreHardware API's(Honestly the worst low level api i've ever seen).
          * More information here: https://developer.apple.com/reference/coreaudio/
          * Also: https://developer.apple.com/reference/audiounit/
          */
+
         [StructLayout(LayoutKind.Sequential)]
         struct AudioObjectPropertyAddress
         {
@@ -35,25 +65,7 @@ namespace WCS.MAIN.Functions
          * In here we pass the str -> hex -> decimal values.
          * Ex: 'volm' -> (hex)0x766f6c6d -> (decimal)1987013741 */
 
-        public  const int       MIXER_MAX_VOL                    = 100;          // Max scalar value
-        public  const int       MIXER_MIN_VOL                    = 100;          // Min scalar value
-        private const int       NO_QUALIFIER                     = 0;            // A UInt32 indicating the size of the buffer pointed to by inQualifierData. Note that not all properties require qualification, in which case thisvalue will be 0.
-        private const int       OBJ_SYSTEM_OBJ                   = 1;            // The AudioObjectID that always refers to the one and only instance of the AudioSystemObject class.
-        private const uint      PROP_ELEM_MASTER                 = 0;            // 0
-        private const uint      PROP_ELEM_S_CHANNEL_F            = 1;            // Default device sound channels
-        private const uint      PROP_ELEM_S_CHANNEL_S            = 2;            // Default device sound channels
-        private const uint      PROP_SCOPE_GLOBAL                = 1735159650;   // 'glob'
-        private const uint      PROP_SCOPE_OUTPUT                = 1869968496;   // 'outp'
-        private const uint      PROP_SELECTOR_DEF_DEV            = 1682929012;   // 'dOut'
-        private const uint      PROP_SELECTOR_VOL_SCA            = 1987013741;   // 'volm'
-        private const uint      PROP_SELECTOR_VOL_MUTE           = 1836414053;   // 'mute'
-        private const uint      FUNCTION_FAIL                    = 0;            // Basically a function fail const
-        private const string    LIB_PATH                         = "/System/Library/Frameworks/AudioUnit.framework/AudioUnit"; // P/Invoke lib.
-        private       uint      SIZE                             = 0;            // A global var to prevent redefiniton
-        private readonly uint   DEFAULT_DEVICE                   = 0;            // global deviceID
-        public  readonly object FUNCTION_FAIL_RET                = -1337;        // WController function fail ret. TODO: MORE ID'S.
-
-        [DllImport(LIB_PATH)]
+        [DllImport(CORE_AUDIO_LIB_PATH)]
         private static extern int AudioObjectGetPropertyData
         (
             uint inObjectID,
@@ -62,12 +74,12 @@ namespace WCS.MAIN.Functions
             IntPtr inQualifierData,
             ref uint ioDataSize,
             [Out] byte[] outData
-            /* I could've just said 'out uint outData' here but that would make my life harder 
-               since i should redefine the function for every data type i use. With [Out] attribute
-               i just convert the data into a byte buffer and let the core do the conversion. */
+        /* I could've just said 'out uint outData' here but that would make my life harder 
+           since i should redefine the function for every data type i use. With [Out] attribute
+           i just convert the data into a byte buffer and let the core do the conversion. */
         );
 
-        [DllImport(LIB_PATH)]
+        [DllImport(CORE_AUDIO_LIB_PATH)]
         private static extern int AudioObjectSetPropertyData
         (
             uint inObjectID,
@@ -77,6 +89,16 @@ namespace WCS.MAIN.Functions
             uint inDataSize,
             byte[] inData
         );
+        #endregion
+
+        [DllImport(CARBON_LIB_PATH)]
+        static extern CGEventRef CGEventCreateKeyboardEvent(__notused__ source, uint keyCode, bool isKeyDown);
+        [DllImport(CARBON_LIB_PATH)]
+        static extern void CGEventPost(uint tap, CGEventRef CGEventPtr);
+        [DllImport(CARBON_LIB_PATH)]
+        static extern void CGEventKeyboardSetUnicodeString(CGEventRef evtPtr, int strcount, byte[] unicodeString);
+        [DllImport(CARBON_LIB_PATH)]
+        static extern void CFRelease(CGEventRef CGEventPtr);
 
         public osxFunctions()
         {
@@ -209,7 +231,14 @@ namespace WCS.MAIN.Functions
 
         public void sendKeyStroke(string key)
         {
-            throw new NotImplementedException();
+            CGEventRef iEvent = CGEventCreateKeyboardEvent(null, 
+                                                           CARBON_NO_KEY, 
+                                                           CARBON_KEYDOWN);
+            CGEventKeyboardSetUnicodeString(iEvent, 
+                                            key.Length, 
+                                            Encoding.Unicode.GetBytes(key));
+            CGEventPost(KCGHIDEEVENTTAP, iEvent);
+            CFRelease(iEvent);
         }
 #endif
     }

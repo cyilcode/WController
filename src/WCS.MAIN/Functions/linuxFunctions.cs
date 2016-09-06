@@ -145,7 +145,12 @@ namespace WCS.MAIN.Functions
             long level = 0;
             var ranges = getVolumeRange();
             ret = snd_mixer_selem_get_playback_volume(getMixer(), SND_MIXER_SCHN_FRONT_LEFT, ref level);
-            if (ret != ALSA_SUCCESS) { ErrorCode = ALSAERRCODE.GET_PLAYBACK_VOLUME; return -1; }
+            if (ret != ALSA_SUCCESS)
+            {
+                ErrorCode = ALSAERRCODE.GET_PLAYBACK_VOLUME;
+                GlobalHelper.log("snd_mixer_selem_get_playback_volume failed with errcode: " + ret);
+                return INVALID_RANGE;
+            }
             return level * PERCENT / ranges[RANGE_MAXIMUM];
         }
 
@@ -154,9 +159,18 @@ namespace WCS.MAIN.Functions
             var mixer = getMixer();
             var val = 0;
             var hasSwitch = Convert.ToBoolean(snd_mixer_selem_has_playback_switch(mixer));
-            if (!hasSwitch) return false; // TODO: Expand behaviour.
+            if (!hasSwitch)
+            {
+                GlobalHelper.log("snd_mixer_selem_has_playback_switch failed. No playback switch found.");
+                return false;
+            }
             ret = snd_mixer_selem_get_playback_switch(mixer, SND_MIXER_SCHN_FRONT_LEFT, ref val);
-            if (ret != ALSA_SUCCESS) { ErrorCode = ALSAERRCODE.GET_PLAYBACK_SWITCH; return false; }
+            if (ret != ALSA_SUCCESS)
+            {
+                ErrorCode = ALSAERRCODE.GET_PLAYBACK_SWITCH;
+                GlobalHelper.log("snd_mixer_selem_get_playback_switch failed with errcode: " + ret);
+                return false;
+            }
             /* get_playback_switch returns the status of the toggle. If it retuns 1 means mixer is not muted.
                To make it same with windows and mac osx. If we get 0, that means mixer is muted and we should return true.
                Basically, we reversed the return data. 
@@ -170,17 +184,23 @@ namespace WCS.MAIN.Functions
         public void muteMixer()
         {
             if (isMixerMuted()) return;
-            var mixer = getMixer();
-            ret = snd_mixer_selem_set_playback_switch_all(mixer, MUTE_MIXER);
+            ret = snd_mixer_selem_set_playback_switch_all(getMixer(), MUTE_MIXER);
             if (ret != ALSA_SUCCESS)
+            {
                 ErrorCode = ALSAERRCODE.SET_PLAYBACK_SWITCH_ALL;
+                GlobalHelper.log("snd_mixer_selem_set_playback_switch_all failed with errcode: " + ret);
+            }
         }
 
         public void unmuteMixer()
         {
             if (!isMixerMuted()) return;
-            var mixer = getMixer();
-            ret = snd_mixer_selem_set_playback_switch_all(mixer, UNMUTE_MIXER);
+            ret = snd_mixer_selem_set_playback_switch_all(getMixer(), UNMUTE_MIXER);
+            if (ret != ALSA_SUCCESS)
+            {
+                ErrorCode = ALSAERRCODE.SET_PLAYBACK_SWITCH_ALL;
+                GlobalHelper.log("snd_mixer_selem_set_playback_switch_all failed with errcode: " + ret);
+            }
         }
 
         public void VolumeDownBy(float value)
@@ -188,11 +208,13 @@ namespace WCS.MAIN.Functions
             var ranges = getVolumeRange();
             var level = GetVolumeLevel();
             if (level <= RANGE_PERCENT_MIN) return;
-            var mixer = getMixer();
             var valueToSet = ((long)(level - value) * ranges[RANGE_MAXIMUM] / PERCENT) + ROUND;
-            ret = snd_mixer_selem_set_playback_volume_all(mixer, valueToSet);
+            ret = snd_mixer_selem_set_playback_volume_all(getMixer(), valueToSet);
             if (ret != ALSA_SUCCESS)
+            {
                 ErrorCode = ALSAERRCODE.SET_PLAYBACK_VOLUME_ALL;
+                GlobalHelper.log("snd_mixer_selem_set_playback_volume_all failed with errcode: " + ret);
+            }
         }
 
         public void VolumeUpBy(float value)
@@ -200,14 +222,16 @@ namespace WCS.MAIN.Functions
             long valueToSet = 0;
             var ranges = getVolumeRange();
             var level = GetVolumeLevel();
-            var mixer = getMixer();
             if (value >= RANGE_PERCENT_MAX)
                 valueToSet = ranges[RANGE_MAXIMUM];
             else
                 valueToSet = ((long)(level + value) * ranges[RANGE_MAXIMUM] / PERCENT) + ROUND;
-            ret = snd_mixer_selem_set_playback_volume_all(mixer, valueToSet);
+            ret = snd_mixer_selem_set_playback_volume_all(getMixer(), valueToSet);
             if (ret != ALSA_SUCCESS)
+            {
                 ErrorCode = ALSAERRCODE.SET_PLAYBACK_VOLUME_ALL;
+                GlobalHelper.log("snd_mixer_selem_set_playback_volume_all failed with errcode: " + ret);
+            }
         }
 
         public long[] getVolumeRange()
@@ -215,8 +239,13 @@ namespace WCS.MAIN.Functions
             long min = INVALID_RANGE;
             long max = INVALID_RANGE;
             var mixer = getMixer();
-            ret = snd_mixer_selem_get_playback_volume_range(mixer, ref min, ref max);
-            if (ret != ALSA_SUCCESS) { ErrorCode = ALSAERRCODE.GET_PLAYBACK_VOLUME_RANGE; return null; }
+            ret = snd_mixer_selem_get_playback_volume_range(getMixer(), ref min, ref max);
+            if (ret != ALSA_SUCCESS)
+            {
+                ErrorCode = ALSAERRCODE.GET_PLAYBACK_VOLUME_RANGE;
+                GlobalHelper.log("snd_mixer_selem_get_playback_volume_range failed with errcode: " + ret);
+                return null;
+            }
             return new long[] { min, max };
         }
 
@@ -226,13 +255,33 @@ namespace WCS.MAIN.Functions
             var mixer = IntPtr.Zero;
             var simpleElement = IntPtr.Zero;
             ret = snd_mixer_open(ref mixerHandle, MODE_DEFAULT);
-            if (ret != ALSA_SUCCESS) { ErrorCode = ALSAERRCODE.MIXER_OPEN; return IntPtr.Zero; }
+            if (ret != ALSA_SUCCESS)
+            {
+                ErrorCode = ALSAERRCODE.MIXER_OPEN;
+                GlobalHelper.log("snd_mixer_open failed with errcode: " + ret);
+                return IntPtr.Zero;
+            }
             ret = snd_mixer_attach(mixerHandle, defaultSoundCard);
-            if (ret != ALSA_SUCCESS) { ErrorCode = ALSAERRCODE.MIXER_ATTACH; return IntPtr.Zero; }
+            if (ret != ALSA_SUCCESS)
+            {
+                ErrorCode = ALSAERRCODE.MIXER_ATTACH;
+                GlobalHelper.log("snd_mixer_attach failed with errcode: " + ret);
+                return IntPtr.Zero;
+            }
             ret = snd_mixer_selem_register(mixerHandle, IntPtr.Zero, IntPtr.Zero);
-            if (ret != ALSA_SUCCESS) { ErrorCode = ALSAERRCODE.MIXER_SELEM_REGISTER; return IntPtr.Zero; }
+            if (ret != ALSA_SUCCESS)
+            {
+                ErrorCode = ALSAERRCODE.MIXER_SELEM_REGISTER;
+                GlobalHelper.log("snd_mixer_selem_register failed with errcode: " + ret);
+                return IntPtr.Zero;
+            }
             ret = snd_mixer_load(mixerHandle);
-            if (ret != ALSA_SUCCESS) { ErrorCode = ALSAERRCODE.MIXER_LOAD; return IntPtr.Zero; }
+            if (ret != ALSA_SUCCESS)
+            {
+                ErrorCode = ALSAERRCODE.MIXER_LOAD;
+                GlobalHelper.log("snd_mixer_load failed with errcode: " + ret);
+                return IntPtr.Zero;
+            }
             snd_mixer_selem_id_malloc(ref sID);
             snd_mixer_selem_id_set_index(sID, INDEX_ZERO);
             snd_mixer_selem_id_set_name(sID, mixerName);
@@ -240,7 +289,10 @@ namespace WCS.MAIN.Functions
             if (simpleElement != IntPtr.Zero)
                 return simpleElement;
             else
+            {
                 ErrorCode = ALSAERRCODE.FIND_SELEM;
+                GlobalHelper.log("snd_mixer_find_selem failed with errcode: " + ret);
+            }
             return IntPtr.Zero;
         }
 
@@ -261,10 +313,10 @@ namespace WCS.MAIN.Functions
             xdo_t mXDO = xdo_new(":0"); // basically a NULL
             ret = xdo_get_active_window(mXDO, out w_ret);
             if (ret != LIBXDO_SUCCESS)
-                GlobalHelper.log("xdo_get_active_window failed with errcode: " + ret); // please don't judge me.
+                GlobalHelper.log("xdo_get_active_window failed with errcode: " + ret);
             ret = xdo_enter_text_window(mXDO, w_ret, key);
             if (ret != LIBXDO_SUCCESS)
-                GlobalHelper.log("xdo_enter_text_window failed with errcode: " + ret); // please don't judge me.
+                GlobalHelper.log("xdo_enter_text_window failed with errcode: " + ret);
             xdo_free(mXDO);
         }
     }
