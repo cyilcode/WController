@@ -34,6 +34,12 @@ namespace WCS.MAIN.Functions
         private const int           SND_MIXER_SCHN_FRONT_LEFT          = 1;
         private const int           MUTE_MIXER                         = 0;
         private const int           UNMUTE_MIXER                       = 1;
+        private const int           MOUSE_BUTTON_LEFT                  = 1;
+        private const int           MOUSE_BUTTON_MIDDLE                = 2;
+        private const int           MOUSE_BUTTON_RIGHT                 = 3;
+        private const int           MOUSE_BUTTON_WHEELUP               = 4;
+        private const int           MOUSE_BUTTON_WHEELDOWN             = 5;
+
         private int                 ret                                = 0;
         public ALSAERRCODE ErrorCode { get; set; }
 
@@ -131,6 +137,16 @@ namespace WCS.MAIN.Functions
         /// <returns>0 on success.(obviously not zero on fail lel)</returns>
         [DllImport(LIBXDO_LIB_PATH)]
         static extern int xdo_enter_text_window(xdo_t xdo, Window window_ret, string keysequence, uint delay = 12000);
+
+        /// <summary>
+        /// Send a mouse press (aka mouse down) for a given button at the current mouse location.
+        /// </summary>
+        /// <param name="xdo">xdo_t instance</param>
+        /// <param name="window_ret">The window you want to send the keysequence to or CURRENTWINDOW(0)</param>
+        /// <param name="button"></param>
+        /// <returns>0 on success.(obviously not zero on fail lel)</returns>
+        [DllImport(LIBXDO_LIB_PATH)]
+        static extern int xdo_mouse_down(xdo_t xdo, Window window_ret, int button);
 
         /// <summary>
         /// Free and destroy an xdo_t instance.
@@ -319,5 +335,6 @@ namespace WCS.MAIN.Functions
                 GlobalHelper.log("xdo_enter_text_window failed with errcode: " + ret);
             xdo_free(mXDO);
         }
+
     }
 }
