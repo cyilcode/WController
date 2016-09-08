@@ -37,7 +37,7 @@ namespace WCS.MAIN.Functions
         private const int           MOUSE_BUTTON_LEFT                  = 1;
         private const int           MOUSE_BUTTON_MIDDLE                = 2;
         private const int           MOUSE_BUTTON_RIGHT                 = 3;
-        private const int           MOUSE_BUTTON_WHEELUP               = 4;
+        private const int           MOUSE_BUTTON_WHEELUP               = 4;                     // Should figure out horizontal wheel aswell. instead of sending left & right keys.
         private const int           MOUSE_BUTTON_WHEELDOWN             = 5;
 
         private int                 ret                                = 0;
@@ -147,6 +147,8 @@ namespace WCS.MAIN.Functions
         /// <returns>0 on success.(obviously not zero on fail lel)</returns>
         [DllImport(LIBXDO_LIB_PATH)]
         static extern int xdo_mouse_down(xdo_t xdo, Window window_ret, int button);
+        [DllImport(LIBXDO_LIB_PATH)]
+        static extern int xdo_mouse_up(xdo_t xdo, Window window_ret, int button);
 
         /// <summary>
         /// Free and destroy an xdo_t instance.

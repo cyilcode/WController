@@ -19,6 +19,10 @@ namespace WCS.MAIN.Functions
         public  const int       MIXER_MIN_VOL                    = 100;          // Min scalar value
         private const int       NO_QUALIFIER                     = 0;            // A UInt32 indicating the size of the buffer pointed to by inQualifierData. Note that not all properties require qualification, in which case thisvalue will be 0.
         private const int       OBJ_SYSTEM_OBJ                   = 1;            // The AudioObjectID that always refers to the one and only instance of the AudioSystemObject class.
+        private const int       WHEELEVENT_UNITS_LINE            = 1;            // Line flag for unit type
+        private const int       WHEELEVENT_WHEEL_COUNT           = 2;            // 1 = Vertical, 2 = Veritcal - Horizontal
+        private const int       WHEELEVENT_WHEEL_Y_SENSITIVITY   = 50;           // Positive value = Upwards, Negative Value = 
+        private const int       WHEELEVENT_WHEEL_X_SENSITIVITY   = 50;           // TODO: Read these values from a configuration file !
         private const uint      PROP_ELEM_MASTER                 = 0;            // 0
         private const uint      PROP_ELEM_S_CHANNEL_F            = 1;            // Default device sound channels
         private const uint      PROP_ELEM_S_CHANNEL_S            = 2;            // Default device sound channels
@@ -91,8 +95,20 @@ namespace WCS.MAIN.Functions
         );
         #endregion
 
+        [StructLayout(LayoutKind.Sequential)]
+        struct CGPoint
+        {
+            public float x;
+            public float y;
+            public CGPoint(bool initFromMonoCursor) { x = Cursor.Position.X; y = Cursor.Position.Y; }
+        }
+
         [DllImport(CARBON_LIB_PATH)]
         static extern CGEventRef CGEventCreateKeyboardEvent(__notused__ source, uint keyCode, bool isKeyDown);
+        [DllImport(CARBON_LIB_PATH)]
+        static extern CGEventRef CGEventCreateMouseEvent(__notused__ source, int mouseType, CGPoint mouseCursorPosition, int mouseButton);
+        [DllImport(CARBON_LIB_PATH)]
+        static extern CGEventRef CGEventCreateScrollWheelEvent(__notused__ source, int units, uint wheelCount, int v, int h);
         [DllImport(CARBON_LIB_PATH)]
         static extern void CGEventPost(uint tap, CGEventRef CGEventPtr);
         [DllImport(CARBON_LIB_PATH)]
