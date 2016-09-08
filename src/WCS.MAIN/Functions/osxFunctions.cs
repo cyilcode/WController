@@ -16,13 +16,13 @@ namespace WCS.MAIN.Functions
 #if DNX451
 
         public  const int       MIXER_MAX_VOL                    = 100;          // Max scalar value
-        public  const int       MIXER_MIN_VOL                    = 100;          // Min scalar value
+        public  const int       MIXER_MIN_VOL                    = 0;            // Min scalar value
         private const int       NO_QUALIFIER                     = 0;            // A UInt32 indicating the size of the buffer pointed to by inQualifierData. Note that not all properties require qualification, in which case thisvalue will be 0.
         private const int       OBJ_SYSTEM_OBJ                   = 1;            // The AudioObjectID that always refers to the one and only instance of the AudioSystemObject class.
         private const int       WHEELEVENT_UNITS_LINE            = 1;            // Line flag for unit type
         private const int       WHEELEVENT_WHEEL_COUNT           = 2;            // 1 = Vertical, 2 = Veritcal - Horizontal
         private const int       WHEELEVENT_WHEEL_Y_SENSITIVITY   = 50;           // Positive value = Upwards, Negative Value = 
-        private const int       WHEELEVENT_WHEEL_X_SENSITIVITY   = 50;           // TODO: Read these values from a configuration file !
+        private const int       WHEELEVENT_WHEEL_X_SENSITIVITY   = 50;           
         private const uint      PROP_ELEM_MASTER                 = 0;            // 0
         private const uint      PROP_ELEM_S_CHANNEL_F            = 1;            // Default device sound channels
         private const uint      PROP_ELEM_S_CHANNEL_S            = 2;            // Default device sound channels

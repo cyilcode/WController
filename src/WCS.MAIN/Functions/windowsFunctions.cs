@@ -10,7 +10,6 @@ namespace Functions
 {
     public class windowsFunctions : IFunctions
     {
-        // TODO: read this table from an .ini file or something to make it customizable.
         private const uint   MOUSEEVENTF_WHEEL      = 0x0800;
         private const uint   MOUSEEVENTF_LEFTDOWN   = 0x0002;
         private const uint   MOUSEEVENTF_LEFTUP     = 0x0004;
