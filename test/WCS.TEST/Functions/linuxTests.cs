@@ -8,7 +8,7 @@ namespace WCS.TEST.linFunctions
 {
     public class linuxTests
     {
-        private readonly linuxFunctions linFunctions    = new linuxFunctions();
+        private readonly linuxFunctions linFunctions    = new linuxFunctions(new Settings());
         private const sbyte INVALID_RANGE               = -1;
         private const sbyte RANGE_MINIMUM               = 0;
         private const sbyte RANGE_MAXIMUM               = 1;

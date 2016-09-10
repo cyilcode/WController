@@ -73,7 +73,7 @@ namespace WCS.TEST
 
         private bool isDesktop()
         {
-            var function = new linuxFunctions();
+            var function = new linuxFunctions(new Settings());
             var exp = Record.Exception(() => function.getMousePosition());
             if (exp != null && exp.HResult == NODESKTOP_HRESULT)
                 return false;

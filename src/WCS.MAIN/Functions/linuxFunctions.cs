@@ -16,8 +16,8 @@ namespace WCS.MAIN.Functions
     public class linuxFunctions : IFunctions
     {
         private IntPtr              mixerHandle                        = IntPtr.Zero;           // Main mixer handle
-        private const string        defaultSoundCard                   = "default";
-        private const string        mixerName                          = "Master";
+        private const string        DEFAULT_SOUND_CARD_KEY             = "default_sound_card";
+        private const string        MIXER_NAME_KEY                     = "default_mixer_name";
         private const string        LIBASOUND_LIB_PATH                 = "libasound.so.2";
         private const string        LIBXDO_LIB_PATH                    = "libxdo.so.3";
         private const sbyte         MODE_DEFAULT                       = 0;                     // Open mode
@@ -41,6 +41,9 @@ namespace WCS.MAIN.Functions
         private const int           MOUSE_BUTTON_WHEELDOWN             = 5;
 
         private int                 ret                                = 0;
+        private readonly Settings   g_Settings;
+
+
         public ALSAERRCODE ErrorCode { get; set; }
 
         #region ALSAPINVOKE
@@ -155,8 +158,13 @@ namespace WCS.MAIN.Functions
         /// </summary>
         /// <param name="xdo">xdo_t instance</param>
         [DllImport(LIBXDO_LIB_PATH)]
-        static extern void xdo_free(xdo_t xdo); 
+        static extern void xdo_free(xdo_t xdo);
         #endregion
+
+        public linuxFunctions(Settings set)
+        {
+            g_Settings = set;
+        }
 
         public float GetVolumeLevel()
         {
@@ -279,7 +287,7 @@ namespace WCS.MAIN.Functions
                 GlobalHelper.log("snd_mixer_open failed with errcode: " + ret);
                 return IntPtr.Zero;
             }
-            ret = snd_mixer_attach(mixerHandle, defaultSoundCard);
+            ret = snd_mixer_attach(mixerHandle, g_Settings.confQuery<string>(DEFAULT_SOUND_CARD_KEY));
             if (ret != ALSA_SUCCESS)
             {
                 ErrorCode = ALSAERRCODE.MIXER_ATTACH;
@@ -302,7 +310,7 @@ namespace WCS.MAIN.Functions
             }
             snd_mixer_selem_id_malloc(ref sID);
             snd_mixer_selem_id_set_index(sID, INDEX_ZERO);
-            snd_mixer_selem_id_set_name(sID, mixerName);
+            snd_mixer_selem_id_set_name(sID, g_Settings.confQuery<string>(MIXER_NAME_KEY));
             simpleElement = snd_mixer_find_selem(mixerHandle, sID);
             if (simpleElement != IntPtr.Zero)
                 return simpleElement;

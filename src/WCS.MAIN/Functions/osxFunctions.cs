@@ -21,7 +21,7 @@ namespace WCS.MAIN.Functions
         private const int       OBJ_SYSTEM_OBJ                   = 1;            // The AudioObjectID that always refers to the one and only instance of the AudioSystemObject class.
         private const int       WHEELEVENT_UNITS_LINE            = 1;            // Line flag for unit type
         private const int       WHEELEVENT_WHEEL_COUNT           = 2;            // 1 = Vertical, 2 = Veritcal - Horizontal
-        private const int       WHEELEVENT_WHEEL_Y_SENSITIVITY   = 50;           // Positive value = Upwards, Negative Value = 
+        private const int       WHEELEVENT_WHEEL_Y_SENSITIVITY   = 50;           // Positive value = Upwards, Negative Value = Downwards
         private const int       WHEELEVENT_WHEEL_X_SENSITIVITY   = 50;           
         private const uint      PROP_ELEM_MASTER                 = 0;            // 0
         private const uint      PROP_ELEM_S_CHANNEL_F            = 1;            // Default device sound channels
