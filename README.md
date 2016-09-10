@@ -8,7 +8,7 @@ Wireless control is a cross-platform server module for remote applications that 
 * Custom code execution (plugin development)
 * 100% Free
 
-# How to install and run ?
+# How to install ?
 
 Currently, WController is not operational yet. However, if you want to get into the developmental stage you need to download prerequisites for your platform
 
@@ -24,8 +24,29 @@ Setup on linux is fairly simple
 * Open up a terminal and get into the WController main directory
 * Execute ```chmod x+ linux_installscript.sh``` to assign proper permissions to setup script
 * Just simply execute ```./linux_installscript.sh``` and done !!
+* Restart your terminal and done !!
 
-now you can build or run the program with:
+**OSX**
+
+On Mac OSX, setup will require homebrew. If you haven't installed it yet,
+
+Run
+
+ ```/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" ```
+
+on your terminal.
+
+After,
+
+* Clone this repository
+* Open up a terminal and get into the WController main directory
+* Execute ```chmod x+ osx_installscript.sh``` to assign proper permissions to setup script
+* Just simply execute ```./osx_installscript.sh```
+* Restart your terminal and done !!
+
+# How to run ?
+
+I you have run the installation script for your platform, you should be able to build or run the program with:
 
  ```dnu build ./src/WCS.MAIN/project.json ``` to build or  ```dnx -p ./src/WCS.MAIN ``` to run.
  
@@ -33,8 +54,4 @@ or you can build or run the test project with:
 
  ```dnu build ./test/WCS.TEST/project.json ``` to build or  ```dnx -p ./test/WCS.TEST test ``` to run.
 
-**OSX**
-
-Coming soon
-
-# Development Progress - 32%
+# Development Progress - 37%
