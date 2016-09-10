@@ -20,46 +20,32 @@ namespace WCS.TEST
         public CompatibleFactAttribute(OS id, bool requiresDesktop)
         {
             platform = id;
-            if (id != OS.CROSSPLATFORM) // No need to check any platform and master mixer for cross platform functions.
-            {
-                if (!platformCheck())
+            GlobalHelper hlp = new GlobalHelper();
+                if (!platformCheck(hlp))
                     Skip += " " + WRONG_PLATFORM;
                 if (id == OS.WINDOWS && !masterMixerEnabled())
                     Skip += " " + NO_MASTER_MIXER;
-                if (id == OS.LINUX && !checkALSA())
+                if (id == OS.LINUX && !checkALSA(hlp))
                     Skip += " " + NO_ALSA;
-                if (id == OS.LINUX && !checkSoundCard())
+                if (id == OS.LINUX && !checkSoundCard(hlp))
                     Skip += " " + NO_SOUND_CARD;
-            }
             if (requiresDesktop && !isDesktop())
                 Skip += " " + NO_DESKTOP;
         }
 
-        private bool checkALSA() =>
-               File.Exists("/usr/lib/x86_64-linux-gnu/libasound.so.2")
-            || File.Exists("/usr/lib/i386-linux-gnu/libasound.so.2");
+        private bool checkALSA(GlobalHelper gHelper) => gHelper.execute_shell_command("dpkg", "-l | grep libasound2-dev").Contains("libasound2-dev");
 
-        private bool checkSoundCard()
+        private bool checkSoundCard(GlobalHelper gHelper)
         {
-            var startInfo = new ProcessStartInfo();
-            startInfo.FileName = "arecord";
-            startInfo.Arguments = "-l";
-            startInfo.RedirectStandardError = true;
-            startInfo.RedirectStandardInput = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.CreateNoWindow = true;
-            startInfo.UseShellExecute = false;
-            var commandProcess = Process.Start(startInfo);
-            var output = commandProcess.StandardOutput.ReadToEnd();
-            if (output != null || output != string.Empty)
+            string output = gHelper.execute_shell_command("arecord", "-l");
+            if (output != string.Empty)
                 if (!output.Contains("no soundcards found"))
                     return true;
             return false;
         }
 
-        private bool platformCheck()
+        private bool platformCheck(GlobalHelper gHelper)
         {
-            var gHelper = new GlobalHelper();
             var detectedOS = gHelper.getOS();
             if (detectedOS != platform) return false;
             return true;

@@ -6,9 +6,9 @@ namespace WCS.MAIN.Globals
 {
     public class GlobalHelper
     {
-        // Some distros throw this instead of the values in the Platform enum.
-        private const byte   LINUX_IS_BEING_A_DICK      = 128;
+        private const string OSX_IDENTIFIER             = "darwin";
         private const string LOG_FILE_PATH              = "error.log";
+
         public void coloredLine(string message, ConsoleColor color)
         {
             Console.ForegroundColor = color;
@@ -16,17 +16,35 @@ namespace WCS.MAIN.Globals
             Console.ForegroundColor = default(ConsoleColor);
         }
 
+        public string execute_shell_command(string command, string args)
+        {
+            var startInfo = new ProcessStartInfo();
+            startInfo.FileName = command;
+            startInfo.Arguments = args;
+            startInfo.RedirectStandardError = true;
+            startInfo.RedirectStandardInput = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            Process commandProcess = Process.Start(startInfo);
+            string output = commandProcess.StandardOutput.ReadToEnd();
+            if (output != null || output != string.Empty)
+                    return output;
+            return "";
+        }
+
         public OS getOS()
         {
-            switch (Environment.OSVersion.Platform)
+            PlatformID platform = Environment.OSVersion.Platform;
+            if (platform == PlatformID.Win32NT || platform == PlatformID.Win32S)
+                return OS.WINDOWS;
+            else
             {
-                case PlatformID.Unix:
-                case (PlatformID)LINUX_IS_BEING_A_DICK:
-                    return OS.LINUX;
-                case PlatformID.MacOSX:
+                string ret = execute_shell_command("uname", "");
+                if (ret == OSX_IDENTIFIER)
                     return OS.MACOSX;
-                default:
-                    return OS.WINDOWS;
+                else
+                    return OS.LINUX;
             }
         }
 
