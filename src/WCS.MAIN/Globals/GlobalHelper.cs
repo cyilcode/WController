@@ -40,7 +40,7 @@ namespace WCS.MAIN.Globals
                 return OS.WINDOWS;
             else
             {
-                string ret = execute_shell_command("uname", "");
+                string ret = execute_shell_command("uname", "").Trim();
                 if (ret == OSX_IDENTIFIER)
                     return OS.MACOSX;
                 else

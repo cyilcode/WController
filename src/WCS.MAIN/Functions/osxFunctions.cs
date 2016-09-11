@@ -39,7 +39,7 @@ namespace WCS.MAIN.Functions
         private const string    CARBON_LIB_PATH                  = "Carbon.framework/Versions/A/Carbon";    // Carbon P/Invoke lib.
         private       uint      SIZE                             = 0;            // A global var to prevent redefiniton
         private readonly uint   DEFAULT_DEVICE                   = 0;            // global deviceID
-        public  readonly object FUNCTION_FAIL_RET                = -1337;        // WController function fail ret. TODO: MORE ID'S.
+        public  readonly object FUNCTION_FAIL_RET                = 9998;        // WController function fail ret. TODO: MORE ID'S.
 
         #region CoreAudio
         /* P/Invoke to CoreAudio and CoreHardware API's(Honestly the worst low level api i've ever seen).
