@@ -7,6 +7,7 @@ using WCS.MAIN.Interfaces;
 using CGEventRef  = System.IntPtr;
 using __notused__ = System.String;
 using System.Text;
+using WCS.MAIN.Globals;
 #endregion
 
 namespace WCS.MAIN.Functions
@@ -24,22 +25,24 @@ namespace WCS.MAIN.Functions
         private const int       WHEELEVENT_WHEEL_Y_SENSITIVITY   = 50;           // Positive value = Upwards, Negative Value = Downwards
         private const int       WHEELEVENT_WHEEL_X_SENSITIVITY   = 50;           
         private const uint      PROP_ELEM_MASTER                 = 0;            // 0
-        private const uint      PROP_ELEM_S_CHANNEL_F            = 1;            // Default device sound channels
-        private const uint      PROP_ELEM_S_CHANNEL_S            = 2;            // Default device sound channels
         private const uint      PROP_SCOPE_GLOBAL                = 1735159650;   // 'glob'
         private const uint      PROP_SCOPE_OUTPUT                = 1869968496;   // 'outp'
+        private const uint      PROP_SELECTOR_V_MASTER           = 1986885219;   // 'vmvc'
         private const uint      PROP_SELECTOR_DEF_DEV            = 1682929012;   // 'dOut'
         private const uint      PROP_SELECTOR_VOL_SCA            = 1987013741;   // 'volm'
         private const uint      PROP_SELECTOR_VOL_MUTE           = 1836414053;   // 'mute'
-        private const uint      FUNCTION_FAIL                    = 0;            // Basically a function fail const
+        private const uint      FUNCTION_SUCCESS                 = 0;            // Basically a function fail const
         private const uint      CARBON_NO_KEY                    = 0;            // Carbon event no key init.
         private const uint      KCGHIDEEVENTTAP                  = 0;            // Event tapping point
         private const bool      CARBON_KEYDOWN                   = true;         // Flag to init the event as Keydown
-        private const string    CORE_AUDIO_LIB_PATH              = "AudioUnit.framework/AudioUnit";         // Core Audio P/Invoke lib.
-        private const string    CARBON_LIB_PATH                  = "Carbon.framework/Versions/A/Carbon";    // Carbon P/Invoke lib.
+        private const string    CORE_AUDIO_LIB_PATH              = "AudioUnit.framework/AudioUnit";             // Core Audio P/Invoke lib.
+        private const string    CARBON_LIB_PATH                  = "Carbon.framework/Versions/A/Carbon";        // Carbon P/Invoke lib.
+        private const string    GET_DATA_FAIL_LOG_MESSAGE        = "AudioObjectGetPropertyData failed with: ";  // It will always log the same thing so, might aswell make my job easier.
+        private const string    PROP_FAIL_LOG_MESSAGE            = "Couldn't find properties.";                 // Same above.
         private       uint      SIZE                             = 0;            // A global var to prevent redefiniton
         private readonly uint   DEFAULT_DEVICE                   = 0;            // global deviceID
         public  readonly object FUNCTION_FAIL_RET                = 9998;        // WController function fail ret. TODO: MORE ID'S.
+        private       int       ret                              = 0;
 
         #region CoreAudio
         /* P/Invoke to CoreAudio and CoreHardware API's(Honestly the worst low level api i've ever seen).
@@ -93,6 +96,9 @@ namespace WCS.MAIN.Functions
             uint inDataSize,
             byte[] inData
         );
+
+        [DllImport(CORE_AUDIO_LIB_PATH)]
+        private static extern bool AudioObjectHasProperty(uint inObjectID, ref AudioObjectPropertyAddress inAddress);
         #endregion
 
         [StructLayout(LayoutKind.Sequential)]
@@ -124,21 +130,23 @@ namespace WCS.MAIN.Functions
         private uint get_mixer()
         {
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_DEF_DEV,
-                                PROP_SCOPE_GLOBAL,
-                                PROP_ELEM_MASTER);
+                                                        PROP_SCOPE_GLOBAL,
+                                                        PROP_ELEM_MASTER);
             SIZE = sizeof(uint);
             byte[] deviceIDBuffer = new byte[SIZE];
-            AudioObjectGetPropertyData(OBJ_SYSTEM_OBJ,
-                                       ref objAdr,
-                                       NO_QUALIFIER,
-                                       IntPtr.Zero,
-                                       ref SIZE,
-                                       deviceIDBuffer);
+            ret = AudioObjectGetPropertyData(OBJ_SYSTEM_OBJ,
+                                             ref objAdr,
+                                             NO_QUALIFIER,
+                                             IntPtr.Zero,
+                                             ref SIZE,
+                                             deviceIDBuffer);
             uint deviceID = BitConverter.ToUInt32(deviceIDBuffer, 0);
-            if (deviceID <= FUNCTION_FAIL)
+            if (deviceID != FUNCTION_SUCCESS)
             {
+                GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
+                if (ret != FUNCTION_SUCCESS)
+                    GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
                 return (uint)FUNCTION_FAIL_RET;
-                // TODO: Log !
             }
             else
                return deviceID;
@@ -146,35 +154,54 @@ namespace WCS.MAIN.Functions
 
         public float GetVolumeLevel()
         {
-            var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_VOL_SCA,
+            var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_V_MASTER,
                                                         PROP_SCOPE_OUTPUT,
-                                                        PROP_ELEM_S_CHANNEL_S);
+                                                        PROP_ELEM_MASTER);
+            if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
+            {
+                GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
+                return Convert.ToSingle(FUNCTION_FAIL_RET);
+            }
             SIZE = sizeof(float);
             byte[] volumeBuffer = new byte[SIZE];
-            int ret = AudioObjectGetPropertyData(DEFAULT_DEVICE,
-                                                 ref objAdr,
-                                                 NO_QUALIFIER,
-                                                 IntPtr.Zero,
-                                                 ref SIZE,
-                                                 volumeBuffer);
-            if (ret == FUNCTION_FAIL) return (float)FUNCTION_FAIL_RET;
-            return (float)(Math.Round(BitConverter.ToSingle(volumeBuffer, 0), 0) * 100);
+            ret = AudioObjectGetPropertyData(DEFAULT_DEVICE,
+                                             ref objAdr,
+                                             NO_QUALIFIER,
+                                             IntPtr.Zero,
+                                             ref SIZE,
+                                             volumeBuffer);
+            if (ret != FUNCTION_SUCCESS)
+            {
+                GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
+                return Convert.ToSingle(FUNCTION_FAIL_RET);
+            }
+            return (float)(Math.Round(BitConverter.ToSingle(volumeBuffer, 0), 2) * 100);
         }
 
         public bool isMixerMuted()
         {
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_VOL_MUTE,
                                                         PROP_SCOPE_OUTPUT,
-                                                        PROP_ELEM_S_CHANNEL_S);
+                                                        PROP_ELEM_MASTER);
+            if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
+            {
+                GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
+                return false;
+            }
             /* even tho i want a bool here, the api returns an uint. So, allocate enough space for an uint not a bool. */
             SIZE = sizeof(uint);
             byte[] mixerStateBuffer = new byte[SIZE];
-            AudioObjectGetPropertyData(DEFAULT_DEVICE,
-                                       ref objAdr,
-                                       NO_QUALIFIER,
-                                       IntPtr.Zero,
-                                       ref SIZE,
-                                       mixerStateBuffer);
+            ret = AudioObjectGetPropertyData(DEFAULT_DEVICE,
+                                             ref objAdr,
+                                             NO_QUALIFIER,
+                                             IntPtr.Zero,
+                                             ref SIZE,
+                                             mixerStateBuffer);
+            if (ret != FUNCTION_SUCCESS)
+            {
+                GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
+                return false;
+            }
             return BitConverter.ToBoolean(mixerStateBuffer, 0);
         }
 
@@ -182,63 +209,91 @@ namespace WCS.MAIN.Functions
         {
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_VOL_MUTE,
                                                         PROP_SCOPE_OUTPUT,
-                                                        PROP_ELEM_S_CHANNEL_S);
+                                                        PROP_ELEM_MASTER);
+            if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
+            {
+                GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
+                return;
+            }
             // I could go (uint)buffer.length here but not gonna do that to keep the code unite.
             SIZE = sizeof(uint);
             byte[] mixerStateBuffer  = BitConverter.GetBytes(true);
-            AudioObjectSetPropertyData(DEFAULT_DEVICE,
-                                       ref objAdr,
-                                       NO_QUALIFIER,
-                                       IntPtr.Zero,
-                                       SIZE,
-                                       mixerStateBuffer);
+            ret = AudioObjectSetPropertyData(DEFAULT_DEVICE,
+                                             ref objAdr,
+                                             NO_QUALIFIER,
+                                             IntPtr.Zero,
+                                             SIZE,
+                                             mixerStateBuffer);
+            if (ret != FUNCTION_SUCCESS)
+                GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
         }
 
         public void unmuteMixer()
         {
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_VOL_MUTE,
                                                         PROP_SCOPE_OUTPUT,
-                                                        PROP_ELEM_S_CHANNEL_S);
+                                                        PROP_ELEM_MASTER);
+            if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
+            {
+                GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
+                return;
+            }
             SIZE = sizeof(uint);
             byte[] mixerStateBuffer = BitConverter.GetBytes(false);
+            ret = AudioObjectSetPropertyData(DEFAULT_DEVICE,
+                                             ref objAdr,
+                                             NO_QUALIFIER,
+                                             IntPtr.Zero,
+                                             SIZE,
+                                             mixerStateBuffer);
+            if (ret != FUNCTION_SUCCESS)
+                GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
+        }
+
+        public void VolumeDownBy(float value)
+        {
+            var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_V_MASTER,
+                                                         PROP_SCOPE_OUTPUT,
+                                                         PROP_ELEM_MASTER);
+            if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
+            {
+                GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
+                return;
+            }
+            SIZE = sizeof(float);
+            float volume_to_set = (GetVolumeLevel() - value) / 100;
+            byte[] mixerVolumeLevel = BitConverter.GetBytes(volume_to_set);
+            ret = AudioObjectSetPropertyData(DEFAULT_DEVICE,
+                                             ref objAdr,
+                                             NO_QUALIFIER,
+                                             IntPtr.Zero,
+                                             SIZE,
+                                             mixerVolumeLevel);
+            if (ret != FUNCTION_SUCCESS)
+                GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
+        }
+
+        public void VolumeUpBy(float value)
+        {
+            var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_V_MASTER,
+                                                         PROP_SCOPE_OUTPUT,
+                                                         PROP_ELEM_MASTER);
+            if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
+            {
+                GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
+                return;
+            }
+            SIZE = sizeof(float);
+            float volume_to_set = (GetVolumeLevel() + value) / 100;
+            byte[] mixerVolumeLevel = BitConverter.GetBytes(volume_to_set);
             AudioObjectSetPropertyData(DEFAULT_DEVICE,
                                        ref objAdr,
                                        NO_QUALIFIER,
                                        IntPtr.Zero,
                                        SIZE,
-                                       mixerStateBuffer);
-        }
-
-        public void VolumeDownBy(float value)
-        {
-            var objrAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_VOL_SCA,
-                                                         PROP_SCOPE_OUTPUT,
-                                                         PROP_ELEM_S_CHANNEL_S);
-            SIZE = sizeof(float);
-            float volume_to_set = GetVolumeLevel() - value;
-            byte[] mixerVolumeLevel = BitConverter.GetBytes(volume_to_set);
-            AudioObjectSetPropertyData(DEFAULT_DEVICE,
-                                       ref objrAdr,
-                                       NO_QUALIFIER,
-                                       IntPtr.Zero,
-                                       SIZE,
                                        mixerVolumeLevel);
-        }
-
-        public void VolumeUpBy(float value)
-        {
-            var objrAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_VOL_SCA,
-                                             PROP_SCOPE_OUTPUT,
-                                             PROP_ELEM_S_CHANNEL_S);
-            SIZE = sizeof(float);
-            float volume_to_set = GetVolumeLevel() + value;
-            byte[] mixerVolumeLevel = BitConverter.GetBytes(volume_to_set);
-            AudioObjectSetPropertyData(DEFAULT_DEVICE,
-                                       ref objrAdr,
-                                       NO_QUALIFIER,
-                                       IntPtr.Zero,
-                                       SIZE,
-                                       mixerVolumeLevel);
+            if (ret != FUNCTION_SUCCESS)
+                GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
         }
 
         public Point getMousePosition() => Cursor.Position;
