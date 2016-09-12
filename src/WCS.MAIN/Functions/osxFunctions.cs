@@ -36,7 +36,7 @@ namespace WCS.MAIN.Functions
         private const uint      KCGHIDEEVENTTAP                  = 0;            // Event tapping point
         private const bool      CARBON_KEYDOWN                   = true;         // Flag to init the event as Keydown
         private const string    CORE_AUDIO_LIB_PATH              = "AudioUnit.framework/AudioUnit";             // Core Audio P/Invoke lib.
-        private const string    CARBON_LIB_PATH                  = "Carbon.framework/Versions/A/Carbon";        // Carbon P/Invoke lib.
+        private const string    QUARTZ_LIB_PATH                  = "Quartz.framework/Versions/A/Quartz";        // Quartz P/Invoke lib.
         private const string    GET_DATA_FAIL_LOG_MESSAGE        = "AudioObjectGetPropertyData failed with: ";  // It will always log the same thing so, might aswell make my job easier.
         private const string    PROP_FAIL_LOG_MESSAGE            = "Couldn't find properties.";                 // Same above.
         private       uint      SIZE                             = 0;            // A global var to prevent redefiniton
@@ -109,17 +109,17 @@ namespace WCS.MAIN.Functions
             public CGPoint(bool initFromMonoCursor) { x = Cursor.Position.X; y = Cursor.Position.Y; }
         }
 
-        [DllImport(CARBON_LIB_PATH)]
+        [DllImport(QUARTZ_LIB_PATH)]
         static extern CGEventRef CGEventCreateKeyboardEvent(__notused__ source, uint keyCode, bool isKeyDown);
-        [DllImport(CARBON_LIB_PATH)]
+        [DllImport(QUARTZ_LIB_PATH)]
         static extern CGEventRef CGEventCreateMouseEvent(__notused__ source, int mouseType, CGPoint mouseCursorPosition, int mouseButton);
-        [DllImport(CARBON_LIB_PATH)]
+        [DllImport(QUARTZ_LIB_PATH)]
         static extern CGEventRef CGEventCreateScrollWheelEvent(__notused__ source, int units, uint wheelCount, int v, int h);
-        [DllImport(CARBON_LIB_PATH)]
+        [DllImport(QUARTZ_LIB_PATH)]
         static extern void CGEventPost(uint tap, CGEventRef CGEventPtr);
-        [DllImport(CARBON_LIB_PATH)]
+        [DllImport(QUARTZ_LIB_PATH)]
         static extern void CGEventKeyboardSetUnicodeString(CGEventRef evtPtr, int strcount, byte[] unicodeString);
-        [DllImport(CARBON_LIB_PATH)]
+        [DllImport(QUARTZ_LIB_PATH)]
         static extern void CFRelease(CGEventRef CGEventPtr);
 
         public osxFunctions()
