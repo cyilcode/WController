@@ -6,7 +6,7 @@ namespace WCS.MAIN.Globals
 {
     public class GlobalHelper
     {
-        private const string OSX_IDENTIFIER             = "darwin";
+        private const string OSX_IDENTIFIER             = "Darwin";
         private const string LOG_FILE_PATH              = "error.log";
 
         public void coloredLine(string message, ConsoleColor color)

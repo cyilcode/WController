@@ -47,7 +47,7 @@ namespace WCS.TEST
         }
 
         [CompatibleFact(OS.WINDOWS, false), Trait("Category", Category)]
-        public void isMixerMuted_returns_the_correct_value() => Assert.Equal(winFunctions.isMixerMuted(), 
+        public void isMixerMuted_returns_the_correct_value() => Assert.Equal(Convert.ToBoolean(winFunctions.isMixerMuted()), 
                                                                              defaultDevice().AudioEndpointVolume
                                                                              .Mute);
 

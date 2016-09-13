@@ -39,8 +39,8 @@ namespace WCS.MAIN.Functions
         private const int           MOUSE_BUTTON_RIGHT                 = 3;
         private const int           MOUSE_BUTTON_WHEELUP               = 4;                     // Should figure out horizontal wheel aswell. instead of sending left & right keys.
         private const int           MOUSE_BUTTON_WHEELDOWN             = 5;
-
         private int                 ret                                = 0;
+        public  readonly object     FUNCTION_FAIL_RET                  = 9998;
         private readonly Settings   g_Settings;
 
 
@@ -175,12 +175,12 @@ namespace WCS.MAIN.Functions
             {
                 ErrorCode = ALSAERRCODE.GET_PLAYBACK_VOLUME;
                 GlobalHelper.log("snd_mixer_selem_get_playback_volume failed with errcode: " + ret);
-                return INVALID_RANGE;
+                return Convert.ToSingle(FUNCTION_FAIL_RET);
             }
             return level * PERCENT / ranges[RANGE_MAXIMUM];
         }
 
-        public bool isMixerMuted()
+        public int isMixerMuted()
         {
             var mixer = getMixer();
             var val = 0;
@@ -188,68 +188,71 @@ namespace WCS.MAIN.Functions
             if (!hasSwitch)
             {
                 GlobalHelper.log("snd_mixer_selem_has_playback_switch failed. No playback switch found.");
-                return false;
+                return (int)FUNCTION_FAIL_RET;
             }
             ret = snd_mixer_selem_get_playback_switch(mixer, SND_MIXER_SCHN_FRONT_LEFT, ref val);
             if (ret != ALSA_SUCCESS)
             {
                 ErrorCode = ALSAERRCODE.GET_PLAYBACK_SWITCH;
                 GlobalHelper.log("snd_mixer_selem_get_playback_switch failed with errcode: " + ret);
-                return false;
+                return (int)FUNCTION_FAIL_RET;
             }
             /* get_playback_switch returns the status of the toggle. If it retuns 1 means mixer is not muted.
                To make it same with windows and mac osx. If we get 0, that means mixer is muted and we should return true.
                Basically, we reversed the return data. 
              */
             if (val == MUTE_MIXER)
-                return true;
+                return UNMUTE_MIXER; // Revise here
             else
-                return false;
+                return MUTE_MIXER;
         }
 
-        public void muteMixer()
+        public int muteMixer()
         {
-            if (isMixerMuted()) return;
             ret = snd_mixer_selem_set_playback_switch_all(getMixer(), MUTE_MIXER);
             if (ret != ALSA_SUCCESS)
             {
                 ErrorCode = ALSAERRCODE.SET_PLAYBACK_SWITCH_ALL;
                 GlobalHelper.log("snd_mixer_selem_set_playback_switch_all failed with errcode: " + ret);
+                return (int)FUNCTION_FAIL_RET;
             }
+            return ret;
         }
 
-        public void unmuteMixer()
+        public int unmuteMixer()
         {
-            if (!isMixerMuted()) return;
             ret = snd_mixer_selem_set_playback_switch_all(getMixer(), UNMUTE_MIXER);
             if (ret != ALSA_SUCCESS)
             {
                 ErrorCode = ALSAERRCODE.SET_PLAYBACK_SWITCH_ALL;
                 GlobalHelper.log("snd_mixer_selem_set_playback_switch_all failed with errcode: " + ret);
+                return (int)FUNCTION_FAIL_RET;
             }
+            return ret;
         }
 
-        public void VolumeDownBy(float value)
+        public int VolumeDownBy(float value)
         {
-            var ranges = getVolumeRange();
-            var level = GetVolumeLevel();
-            if (level <= RANGE_PERCENT_MIN) return;
+            long[] ranges = getVolumeRange();
+            float level = GetVolumeLevel();
+            if (level <= RANGE_PERCENT_MIN) return ALSA_SUCCESS; // Revise here
             var valueToSet = ((long)(level - value) * ranges[RANGE_MAXIMUM] / PERCENT) + ROUND;
             ret = snd_mixer_selem_set_playback_volume_all(getMixer(), valueToSet);
             if (ret != ALSA_SUCCESS)
             {
                 ErrorCode = ALSAERRCODE.SET_PLAYBACK_VOLUME_ALL;
                 GlobalHelper.log("snd_mixer_selem_set_playback_volume_all failed with errcode: " + ret);
+                return (int)FUNCTION_FAIL_RET;
             }
+            return ret;
         }
 
-        public void VolumeUpBy(float value)
+        public int VolumeUpBy(float value)
         {
             long valueToSet = 0;
-            var ranges = getVolumeRange();
-            var level = GetVolumeLevel();
-            if (value >= RANGE_PERCENT_MAX)
-                valueToSet = ranges[RANGE_MAXIMUM];
+            long[] ranges = getVolumeRange();
+            float level = GetVolumeLevel();
+            if (value >= RANGE_PERCENT_MAX) return ALSA_SUCCESS; // Revise here
             else
                 valueToSet = ((long)(level + value) * ranges[RANGE_MAXIMUM] / PERCENT) + ROUND;
             ret = snd_mixer_selem_set_playback_volume_all(getMixer(), valueToSet);
@@ -257,7 +260,9 @@ namespace WCS.MAIN.Functions
             {
                 ErrorCode = ALSAERRCODE.SET_PLAYBACK_VOLUME_ALL;
                 GlobalHelper.log("snd_mixer_selem_set_playback_volume_all failed with errcode: " + ret);
+                return (int)FUNCTION_FAIL_RET;
             }
+            return ret;
         }
 
         public long[] getVolumeRange()
@@ -324,9 +329,14 @@ namespace WCS.MAIN.Functions
 
         public Point getMousePosition() => Cursor.Position;
 
-        public void setMousePosition(Point mousePoint) => Cursor.Position = mousePoint;
+        public int setMousePosition(Point mousePoint)
+        {
+            if (mousePoint == null) return (int)FUNCTION_FAIL_RET;
+            Cursor.Position = mousePoint;
+            return ALSA_SUCCESS;
+        }
 
-        public void sendKeyStroke(string key)
+        public int sendKeyStroke(string key)
         {
             /*
                 This function is great unless it sucks.
@@ -339,11 +349,20 @@ namespace WCS.MAIN.Functions
             xdo_t mXDO = xdo_new(":0"); // basically a NULL
             ret = xdo_get_active_window(mXDO, out w_ret);
             if (ret != LIBXDO_SUCCESS)
+            {
                 GlobalHelper.log("xdo_get_active_window failed with errcode: " + ret);
+                xdo_free(mXDO);
+                return (int)FUNCTION_FAIL_RET;
+            }
             ret = xdo_enter_text_window(mXDO, w_ret, key);
             if (ret != LIBXDO_SUCCESS)
+            {
                 GlobalHelper.log("xdo_enter_text_window failed with errcode: " + ret);
+                xdo_free(mXDO);
+                return (int)FUNCTION_FAIL_RET;
+            }
             xdo_free(mXDO);
+            return LIBXDO_SUCCESS;
         }
 
     }

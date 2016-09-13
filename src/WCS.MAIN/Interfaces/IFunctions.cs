@@ -9,12 +9,12 @@ namespace WCS.MAIN.Interfaces
         /// Turns down the volume of the master mixer by the float amount.
         /// </summary>
         /// <param name="value">percentage</param>
-        void VolumeDownBy(float value);
+        int VolumeDownBy(float value);
         /// <summary>
         /// Turns up the volume of the master mixer by the float amount.
         /// </summary>
         /// <param name="value">percentage</param>
-        void VolumeUpBy(float value);
+        int VolumeUpBy(float value);
         /// <summary>
         /// Gets the current master mixer volume level.
         /// </summary>
@@ -24,15 +24,15 @@ namespace WCS.MAIN.Interfaces
         /// Gets the master mixer mute state.
         /// </summary>
         /// <returns>Mixer mute state</returns>
-        bool isMixerMuted();
+        int isMixerMuted();
         /// <summary>
         /// Mutes the master mixer.
         /// </summary>
-        void muteMixer();
+        int muteMixer();
         /// <summary>
         /// Unmutes the master mixer.
         /// </summary>
-        void unmuteMixer();
+        int unmuteMixer();
         #endregion
         /// <summary>
         /// Returns X,Y coordinates of the mouse cursor.
@@ -43,11 +43,11 @@ namespace WCS.MAIN.Interfaces
         /// Sets the location of the mouse cursor and visually warps it.
         /// </summary>
         /// <param name="mousePoint">Mouse position to set</param>
-        void setMousePosition(Point mousePoint);
+        int setMousePosition(Point mousePoint);
         /// <summary>
         /// Sends the full key event(key press, down, up) to active window
         /// </summary>
         /// <param name="key">Key to send</param>
-        void sendKeyStroke(string key);
+        int sendKeyStroke(string key);
     }
 }

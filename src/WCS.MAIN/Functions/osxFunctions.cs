@@ -276,8 +276,8 @@ namespace WCS.MAIN.Functions
         public void VolumeUpBy(float value)
         {
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_V_MASTER,
-                                                         PROP_SCOPE_OUTPUT,
-                                                         PROP_ELEM_MASTER);
+                                                        PROP_SCOPE_OUTPUT,
+                                                        PROP_ELEM_MASTER);
             if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
             {
                 GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
@@ -286,12 +286,12 @@ namespace WCS.MAIN.Functions
             SIZE = sizeof(float);
             float volume_to_set = (GetVolumeLevel() + value) / 100;
             byte[] mixerVolumeLevel = BitConverter.GetBytes(volume_to_set);
-            AudioObjectSetPropertyData(DEFAULT_DEVICE,
-                                       ref objAdr,
-                                       NO_QUALIFIER,
-                                       IntPtr.Zero,
-                                       SIZE,
-                                       mixerVolumeLevel);
+            ret = AudioObjectSetPropertyData(DEFAULT_DEVICE,
+                                             ref objAdr,
+                                             NO_QUALIFIER,
+                                             IntPtr.Zero,
+                                             SIZE,
+                                             mixerVolumeLevel);
             if (ret != FUNCTION_SUCCESS)
                 GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
         }
