@@ -8,9 +8,9 @@ namespace WCS.MAIN.Globals
 {
     public class Settings
     {
-        private const string OSX_CONF_FILE = "settings/OSXSettings.config";
-        private const string WIN_CONF_FILE = "settings/WindowsSettings.config";
-        private const string LIN_CONF_FILE = "settings/LinuxSettings.config";
+        private const string OSX_CONF_FILE = "src/WCS.MAIN/settings/OSXSettings.config";
+        private const string WIN_CONF_FILE = "src/WCS.MAIN/settings/WindowsSettings.config";
+        private const string LIN_CONF_FILE = "src/WCS.MAIN/settings/LinuxSettings.config";
 
         /// <summary>
         /// Queries the configuration files.

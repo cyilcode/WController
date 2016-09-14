@@ -78,7 +78,7 @@ namespace Functions
         private MMDeviceEnumerator devices = new MMDeviceEnumerator();
         public MMDevice defaultSoundDevice { get { return devices.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia); } }
 
-        public void VolumeDownBy(float value)
+        public int VolumeDownBy(float value)
         {
             var minDecibels = defaultSoundDevice.AudioEndpointVolume.VolumeRange
                                                                     .MinDecibels;
@@ -88,9 +88,10 @@ namespace Functions
                 defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel -= value;
             else
                 defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel = minDecibels;
+                return 0 ;
         }
         
-        public void VolumeUpBy(float value)
+        public int VolumeUpBy(float value)
         {
             var maxDecibles = defaultSoundDevice.AudioEndpointVolume.VolumeRange
                                                                     .MaxDecibels;
@@ -100,21 +101,42 @@ namespace Functions
                 defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel += value;
             else
                 defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel = maxDecibles;
+                return 0;
         }
 
         public float GetVolumeLevel() => defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel;
 
-        public bool isMixerMuted() => defaultSoundDevice.AudioEndpointVolume.Mute;
+        public int isMixerMuted()
+        {
+            return Convert.ToInt32(defaultSoundDevice.AudioEndpointVolume.Mute);
+        }
 
-        public void muteMixer() => defaultSoundDevice.AudioEndpointVolume.Mute = true;
+        public int muteMixer()
+        {
+            defaultSoundDevice.AudioEndpointVolume.Mute = true;
+            return 0;
+        }
 
-        public void unmuteMixer() => defaultSoundDevice.AudioEndpointVolume.Mute = false;
+        public int unmuteMixer()
+        {
+            defaultSoundDevice.AudioEndpointVolume.Mute = false;
+            return 0;
+        }
 
         public Point getMousePosition() => Cursor.Position;
 
-        public void setMousePosition(Point mousePoint) => Cursor.Position = mousePoint;
+        public int setMousePosition(Point mousePoint)
+        {
+            if(mousePoint != null)
+              Cursor.Position = mousePoint;
+            return 0;
+        }
 
-        public void sendKeyStroke(string key) => SendKeys.SendWait(key); // How i love .net devs...
+        public int sendKeyStroke(string key)
+        {
+            SendKeys.SendWait(key); // How i love .net devs...
+            return 0;
+        }
     }
 }
 #endif

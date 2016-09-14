@@ -178,7 +178,7 @@ namespace WCS.MAIN.Functions
             return (float)(Math.Round(BitConverter.ToSingle(volumeBuffer, 0), 2) * 100);
         }
 
-        public bool isMixerMuted()
+        public int isMixerMuted()
         {
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_VOL_MUTE,
                                                         PROP_SCOPE_OUTPUT,
@@ -186,7 +186,7 @@ namespace WCS.MAIN.Functions
             if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
             {
                 GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
-                return false;
+                return (int)FUNCTION_FAIL_RET;
             }
             /* even tho i want a bool here, the api returns an uint. So, allocate enough space for an uint not a bool. */
             SIZE = sizeof(uint);
@@ -200,12 +200,12 @@ namespace WCS.MAIN.Functions
             if (ret != FUNCTION_SUCCESS)
             {
                 GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
-                return false;
+                return (int)FUNCTION_FAIL_RET;
             }
-            return BitConverter.ToBoolean(mixerStateBuffer, 0);
+            return BitConverter.ToInt32(mixerStateBuffer, 0);
         }
 
-        public void muteMixer()
+        public int muteMixer()
         {
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_VOL_MUTE,
                                                         PROP_SCOPE_OUTPUT,
@@ -213,7 +213,7 @@ namespace WCS.MAIN.Functions
             if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
             {
                 GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
-                return;
+		        return (int)FUNCTION_FAIL_RET;
             }
             // I could go (uint)buffer.length here but not gonna do that to keep the code unite.
             SIZE = sizeof(uint);
@@ -225,10 +225,14 @@ namespace WCS.MAIN.Functions
                                              SIZE,
                                              mixerStateBuffer);
             if (ret != FUNCTION_SUCCESS)
+	        {
                 GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
+		        return (int)FUNCTION_FAIL_RET;
+            }
+	        return ret;
         }
 
-        public void unmuteMixer()
+        public int unmuteMixer()
         {
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_VOL_MUTE,
                                                         PROP_SCOPE_OUTPUT,
@@ -236,7 +240,7 @@ namespace WCS.MAIN.Functions
             if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
             {
                 GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
-                return;
+                return (int)FUNCTION_FAIL_RET;
             }
             SIZE = sizeof(uint);
             byte[] mixerStateBuffer = BitConverter.GetBytes(false);
@@ -247,10 +251,14 @@ namespace WCS.MAIN.Functions
                                              SIZE,
                                              mixerStateBuffer);
             if (ret != FUNCTION_SUCCESS)
-                GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
+            {
+		        GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
+		        return (int)FUNCTION_FAIL_RET;
+	        }
+	        return ret;
         }
 
-        public void VolumeDownBy(float value)
+        public int VolumeDownBy(float value)
         {
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_V_MASTER,
                                                          PROP_SCOPE_OUTPUT,
@@ -258,7 +266,7 @@ namespace WCS.MAIN.Functions
             if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
             {
                 GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
-                return;
+                return (int)FUNCTION_FAIL_RET;
             }
             SIZE = sizeof(float);
             float volume_to_set = (GetVolumeLevel() - value) / 100;
@@ -270,10 +278,14 @@ namespace WCS.MAIN.Functions
                                              SIZE,
                                              mixerVolumeLevel);
             if (ret != FUNCTION_SUCCESS)
+	        {
                 GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
+		        return (int)FUNCTION_FAIL_RET;
+            }
+	        return ret;
         }
 
-        public void VolumeUpBy(float value)
+        public int VolumeUpBy(float value)
         {
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_V_MASTER,
                                                         PROP_SCOPE_OUTPUT,
@@ -281,7 +293,7 @@ namespace WCS.MAIN.Functions
             if (!AudioObjectHasProperty(DEFAULT_DEVICE, ref objAdr))
             {
                 GlobalHelper.log(PROP_FAIL_LOG_MESSAGE);
-                return;
+                return (int)FUNCTION_FAIL_RET;
             }
             SIZE = sizeof(float);
             float volume_to_set = (GetVolumeLevel() + value) / 100;
@@ -293,14 +305,23 @@ namespace WCS.MAIN.Functions
                                              SIZE,
                                              mixerVolumeLevel);
             if (ret != FUNCTION_SUCCESS)
+            {
                 GlobalHelper.log(GET_DATA_FAIL_LOG_MESSAGE + ret);
+	            return (int)FUNCTION_FAIL_RET;
+            }
+	        return ret;
         }
 
         public Point getMousePosition() => Cursor.Position;
 
-        public void setMousePosition(Point mousePoint) => Cursor.Position = mousePoint;
+        public int setMousePosition(Point mousePoint)
+        {
+            if (mousePoint == null) return (int)FUNCTION_FAIL_RET;
+            Cursor.Position = mousePoint;
+            return (int)FUNCTION_SUCCESS;
+        }
 
-        public void sendKeyStroke(string key)
+        public int sendKeyStroke(string key)
         {
             CGEventRef iEvent = CGEventCreateKeyboardEvent(null, 
                                                            CARBON_NO_KEY, 
@@ -310,6 +331,7 @@ namespace WCS.MAIN.Functions
                                             Encoding.Unicode.GetBytes(key));
             CGEventPost(KCGHIDEEVENTTAP, iEvent);
             CFRelease(iEvent);
+	        return (int)FUNCTION_SUCCESS; // revise here !!
         }
 #endif
     }

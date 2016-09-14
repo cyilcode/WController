@@ -10,7 +10,6 @@ namespace WCS.TEST.linFunctions
     {
         private readonly linuxFunctions linFunctions    = new linuxFunctions(new Settings());
         private const sbyte LINUX_TEN_PERCENT           = 10;
-        private       int   ret                         = 0;
         private const string Category                   = "Linux Functions tests";
 
         [CompatibleFact(OS.LINUX, false), Trait("Category", Category)]
