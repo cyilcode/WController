@@ -7,7 +7,7 @@ before_install:
   - sudo apt-get install libasound2
   - sudo apt-get install libasound2-dev
 install:
-  - curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh
+  - curl -sSL https://raw.githubusercontent.com/cyilcode/WController/master/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh
   - dnvm upgrade
   - dnu restore
 script:
