@@ -345,6 +345,8 @@ namespace WCS.MAIN.Functions
                 as the function delay increases. Will check on that but for now, libxdo is a lot more viable solution than coding an X11 shared lib
                 by myself.
              */
+			if (key == null || key == string.Empty)
+				return (int)FUNCTION_FAIL_RET;
             Window w_ret;
             xdo_t mXDO = xdo_new(":0"); // basically a NULL
             ret = xdo_get_active_window(mXDO, out w_ret);

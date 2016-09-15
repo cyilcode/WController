@@ -24,6 +24,8 @@ namespace Functions
         private const  int   SCROLL_DOWN            = -120;
         private const  int   SCROLL_LEFT            = -200;
         private const  int   SCROLL_RIGHT           = 200;
+		private const  int 	 FUNCTION_SUCCESS		= 0;
+		private readonly object   FUNCTION_FAIL_RET = 9998;
         private const string WIN_USER32_PATH        = "User32.dll";
         private const string MOUSE_EVENT_EP         = "mouse_event";
 
@@ -101,7 +103,7 @@ namespace Functions
                 defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel += value;
             else
                 defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel = maxDecibles;
-                return 0;
+                return FUNCTION_SUCCESS;
         }
 
         public float GetVolumeLevel() => defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel;
@@ -114,13 +116,13 @@ namespace Functions
         public int muteMixer()
         {
             defaultSoundDevice.AudioEndpointVolume.Mute = true;
-            return 0;
+            return FUNCTION_SUCCESS;
         }
 
         public int unmuteMixer()
         {
             defaultSoundDevice.AudioEndpointVolume.Mute = false;
-            return 0;
+            return FUNCTION_SUCCESS;
         }
 
         public Point getMousePosition() => Cursor.Position;
@@ -129,13 +131,15 @@ namespace Functions
         {
             if(mousePoint != null)
               Cursor.Position = mousePoint;
-            return 0;
+            return FUNCTION_SUCCESS;
         }
 
         public int sendKeyStroke(string key)
         {
+			if (key == null || key == string.Empty)
+				return (int)FUNCTION_FAIL_RET;
             SendKeys.SendWait(key); // How i love .net devs...
-            return 0;
+            return FUNCTION_SUCCESS;
         }
     }
 }

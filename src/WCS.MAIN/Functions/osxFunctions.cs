@@ -260,6 +260,11 @@ namespace WCS.MAIN.Functions
 
         public int VolumeDownBy(float value)
         {
+			if (value > MIXER_MAX_VOL || value < MIXER_MIN_VOL) 
+			{
+				GlobalHelper.log ("Invalid volume scalar range");
+				return (int)FUNCTION_FAIL_RET;
+			}
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_V_MASTER,
                                                          PROP_SCOPE_OUTPUT,
                                                          PROP_ELEM_MASTER);
@@ -287,6 +292,11 @@ namespace WCS.MAIN.Functions
 
         public int VolumeUpBy(float value)
         {
+			if (value > MIXER_MAX_VOL || value < MIXER_MIN_VOL) 
+			{
+				GlobalHelper.log ("Invalid volume scalar range");
+				return (int)FUNCTION_FAIL_RET;
+			}
             var objAdr = new AudioObjectPropertyAddress(PROP_SELECTOR_V_MASTER,
                                                         PROP_SCOPE_OUTPUT,
                                                         PROP_ELEM_MASTER);
@@ -333,7 +343,7 @@ namespace WCS.MAIN.Functions
                                             Encoding.Unicode.GetBytes(key));
             CGEventPost(KCGHIDEEVENTTAP, iEvent);
             CFRelease(iEvent);
-	        return (int)FUNCTION_SUCCESS; // revise here !!
+	        return (int)FUNCTION_SUCCESS;
         }
 #endif
     }
