@@ -139,7 +139,7 @@ namespace WCS.MAIN.Functions
         /// <param name="delay">The delay between keystrokes in microseconds</param>
         /// <returns>0 on success.(obviously not zero on fail lel)</returns>
         [DllImport(LIBXDO_LIB_PATH)]
-        static extern int xdo_enter_text_window(xdo_t xdo, Window window_ret, string keysequence, uint delay = 12000);
+		static extern int xdo_enter_text_window(xdo_t xdo, Window window_ret, string keysequence, uint delay = 12000);
 
         /// <summary>
         /// Send a mouse press (aka mouse down) for a given button at the current mouse location.
@@ -354,7 +354,7 @@ namespace WCS.MAIN.Functions
                 xdo_free(mXDO);
                 return (int)FUNCTION_FAIL_RET;
             }
-            ret = xdo_enter_text_window(mXDO, w_ret, key);
+			ret = xdo_enter_text_window(mXDO, w_ret, key);
             if (ret != LIBXDO_SUCCESS)
             {
                 GlobalHelper.log("xdo_enter_text_window failed with errcode: " + ret);

@@ -323,6 +323,8 @@ namespace WCS.MAIN.Functions
 
         public int sendKeyStroke(string key)
         {
+			if (key == null || key == string.Empty)
+				return (int)FUNCTION_FAIL_RET;
             CGEventRef iEvent = CGEventCreateKeyboardEvent(null, 
                                                            CARBON_NO_KEY, 
                                                            CARBON_KEYDOWN);
