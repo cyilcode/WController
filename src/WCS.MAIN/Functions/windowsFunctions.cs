@@ -90,7 +90,7 @@ namespace Functions
                 defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel -= value;
             else
                 defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel = minDecibels;
-                return 0 ;
+                return FUNCTION_SUCCESS;
         }
         
         public int VolumeUpBy(float value)

@@ -49,5 +49,8 @@ namespace WCS.TEST.linFunctions
         public void isMixerMuted_returns_the_correct_value() =>
             Assert.NotEqual(linFunctions.isMixerMuted(), 
                            (int)linFunctions.FUNCTION_FAIL_RET);
+		[CompatibleFact(OS.LINUX, true), Trait("Category", Category)]
+		public void getmouseposition_returns_position () =>
+			Assert.NotNull(linFunctions.getMousePosition());
     }
 }
