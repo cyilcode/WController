@@ -9,24 +9,13 @@ namespace WCS.TEST.audioTests
     public class audioTests
     {
 
-        private readonly     FunctionHandler handler    = new FunctionHandler();
+        private readonly     FunctionHandler handler;
         private const sbyte  TEN_PERCENT                = 10;
         private const string Category                   = "Audio implementation tests";
 
         public audioTests()
         {
-            switch (new GlobalHelper().getOS())
-            {
-                case OS.WINDOWS:
-                    handler.AudioHandler = new WindowsAudioHandler();
-                    break;
-                case OS.LINUX:
-                    handler.AudioHandler = new LinuxAudioHandler(new Settings());
-                    break;
-                case OS.MACOSX:
-                    handler.AudioHandler = new OSXAudioHandler();
-                    break;
-            }
+            handler = Utils.prepare_function_handler();
         }
 
 

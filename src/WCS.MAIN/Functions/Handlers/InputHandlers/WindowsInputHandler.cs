@@ -2,10 +2,11 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using WCS.MAIN.Interfaces;
 
 namespace WCS.MAIN.Functions.Handlers.InputHandlers
 {
-    public class WindowsInputHandler
+    public class WindowsInputHandler : IInputHandler
     {
         private const uint              MOUSEEVENTF_WHEEL                  = 0x0800;
         private const uint              MOUSEEVENTF_LEFTDOWN               = 0x0002;
