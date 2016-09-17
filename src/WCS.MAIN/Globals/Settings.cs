@@ -27,13 +27,16 @@ namespace WCS.MAIN.Globals
                                         .DeclaringType
                                         .Name;
 
-            if (callerType == "linuxFunctions")
+            if(!callerType.Contains("Handler"))
+                throw new InvalidOperationException("This function is only usable for platform handler instances.");
+
+            if (callerType.Contains("Linux"))
                 fileContents = File.ReadAllLines(LIN_CONF_FILE);
-            else if (callerType == "osxFunctions")
+            else if (callerType.Contains("OSX"))
                 fileContents = File.ReadAllLines(OSX_CONF_FILE);
-            else if (callerType == "windowsFunctions")
+            else if (callerType.Contains("Windows"))
                 fileContents = File.ReadAllLines(WIN_CONF_FILE);
-            else throw new InvalidOperationException("This function is only usable for platform function instances.");
+            else throw new InvalidOperationException("This function is only usable for platform handler instances.");
 
             string keyValue = fileContents.FirstOrDefault(x => x.Contains(key))
                                           .Split(':')[1]
