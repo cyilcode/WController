@@ -2,61 +2,13 @@
   "locked": false,
   "version": 2,
   "targets": {
-    "DNX,Version=v4.5.1": {
-      "NAudio/1.7.3": {
-        "type": "package",
-        "compile": {
-          "lib/net35/NAudio.dll": {}
-        },
-        "runtime": {
-          "lib/net35/NAudio.dll": {}
-        }
-      }
-    },
-    "DNX,Version=v4.5.1/win7-x86": {
-      "NAudio/1.7.3": {
-        "type": "package",
-        "compile": {
-          "lib/net35/NAudio.dll": {}
-        },
-        "runtime": {
-          "lib/net35/NAudio.dll": {}
-        }
-      }
-    },
-    "DNX,Version=v4.5.1/win7-x64": {
-      "NAudio/1.7.3": {
-        "type": "package",
-        "compile": {
-          "lib/net35/NAudio.dll": {}
-        },
-        "runtime": {
-          "lib/net35/NAudio.dll": {}
-        }
-      }
-    }
+    "DNX,Version=v4.5.1": {},
+    "DNX,Version=v4.5.1/win7-x86": {},
+    "DNX,Version=v4.5.1/win7-x64": {}
   },
-  "libraries": {
-    "NAudio/1.7.3": {
-      "type": "package",
-      "sha512": "RfjCKqewCJ7OhVRqkVgiJv5ByPzPk5YWElyC7jLqcV2a9777HDGU00kmVzoMV9gbcNiTJn9ijVrTAgq4GeQP2w==",
-      "files": [
-        "lib/net35/NAudio.dll",
-        "lib/net35/NAudio.XML",
-        "lib/windows8/NAudio.Win8.dll",
-        "lib/windows8/NAudio.Win8.XML",
-        "license.txt",
-        "NAudio.1.7.3.nupkg",
-        "NAudio.1.7.3.nupkg.sha512",
-        "NAudio.nuspec",
-        "readme.txt"
-      ]
-    }
-  },
+  "libraries": {},
   "projectFileDependencyGroups": {
-    "": [
-      "NAudio >= 1.7.3"
-    ],
+    "": [],
     "DNX,Version=v4.5.1": [
       "fx/System.Drawing >= 4.0.0",
       "fx/System.Windows.Forms >= 4.0.0"

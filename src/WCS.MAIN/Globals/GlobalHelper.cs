@@ -53,7 +53,7 @@ namespace WCS.MAIN.Globals
         {
             var trace = new StackTrace().GetFrame(1).GetMethod();
             string location = string.Format("[{0} / {1}]", trace.DeclaringType.Name, trace.Name);
-            string format = string.Format("[{0}] - {1} - on function: {2}",DateTime.Now, log_message, location);
+            string format = string.Format("[{0}] - {1} - on function: {2}\n",DateTime.Now, log_message, location);
             // TODO: File checking
             File.AppendAllText(LOG_FILE_PATH, format);
         }

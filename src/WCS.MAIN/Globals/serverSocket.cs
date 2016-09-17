@@ -2,13 +2,14 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using WCS.MAIN.Functions;
 using WCS.MAIN.Interfaces;
 
 namespace WCS.MAIN.Globals
 {
     public class serverSocket
     {
-        private readonly IFunctions         _functions;
+        private readonly FunctionHandler    _functions;
         private GlobalHelper                _gHelper;
         private byte[] _globalBuffer        = new byte[1];
         private const sbyte g_bArrayOffset  = 0;
@@ -16,7 +17,7 @@ namespace WCS.MAIN.Globals
                                                          SocketType.Stream, 
                                                          ProtocolType.Tcp);
 
-        public serverSocket(IFunctions fnc, GlobalHelper hlp)
+        public serverSocket(FunctionHandler fnc, GlobalHelper hlp)
         {
             _gHelper = hlp;
             _functions = fnc;

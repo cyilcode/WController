@@ -25,23 +25,4 @@
         MACOSX = 2,
         CROSSPLATFORM = 3
     }
-    /// <summary>
-    /// Why this while alsa functions throw their own error codes ? 
-    /// I've added these for the developmental reasons. They act like typedefs of the real error codes.
-    /// </summary>
-    public enum ALSAERRCODE
-    {
-        NONE,
-        MIXER_OPEN,
-        MIXER_ATTACH,
-        MIXER_SELEM_REGISTER,
-        MIXER_LOAD,
-        FIND_SELEM,
-        GET_PLAYBACK_VOLUME_RANGE,
-        GET_PLAYBACK_VOLUME,
-        GET_PLAYBACK_SWITCH,
-        SET_PLAYBACK_SWITCH_ALL,
-        SET_PLAYBACK_VOLUME_ALL,
-        MIXER_CLOSE
-    }
 }

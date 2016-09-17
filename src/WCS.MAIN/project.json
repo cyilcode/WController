@@ -7,7 +7,7 @@
   "licenseUrl": "https://github.com/cyilcode/WController/blob/master/LICENSE",
 
   "dependencies": {
-    "NAudio": "1.7.3"
+    
   },
 
   "compilationOptions": { "emitEntryPoint": true },

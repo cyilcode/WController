@@ -1,7 +1,5 @@
-﻿using NAudio.CoreAudioApi;
-using System.Diagnostics;
-using System.IO;
-using WCS.MAIN.Functions;
+﻿using WCS.MAIN.Functions.Handlers.AudioHandlers;
+using WCS.MAIN.Functions.Handlers.InputHandlers;
 using WCS.MAIN.Globals;
 using Xunit;
 
@@ -17,19 +15,22 @@ namespace WCS.TEST
         private const int    NODESKTOP_HRESULT          = -2146233036;
         private readonly     OS platform;
 
-        public CompatibleFactAttribute(OS id, bool requiresDesktop)
+        public CompatibleFactAttribute(bool requiresDesktop)
         {
-            platform = id;
-            GlobalHelper hlp = new GlobalHelper();
+            GlobalHelper        hlp      = new GlobalHelper();
+            WindowsAudioHandler winAudio = new WindowsAudioHandler();
+            LinuxInputHandler   linInput = new LinuxInputHandler();
+            platform = hlp.getOS();
+
                 if (!platformCheck(hlp))
                     Skip += " " + WRONG_PLATFORM;
-                if (id == OS.WINDOWS && !masterMixerEnabled())
+                if (platform == OS.WINDOWS && masterMixerEnabled(winAudio))
                     Skip += " " + NO_MASTER_MIXER;
-                if (id == OS.LINUX && !checkALSA(hlp))
+                if (platform == OS.LINUX && !checkALSA(hlp))
                     Skip += " " + NO_ALSA;
-                if (id == OS.LINUX && !checkSoundCard(hlp))
+                if (platform == OS.LINUX && !checkSoundCard(hlp))
                     Skip += " " + NO_SOUND_CARD;
-            if (requiresDesktop && !isDesktop())
+            if (requiresDesktop && !isDesktop(linInput))
                 Skip += " " + NO_DESKTOP;
         }
 
@@ -51,16 +52,11 @@ namespace WCS.TEST
             return true;
         }
 
-        private bool masterMixerEnabled()
-        {
-            var devices = new MMDeviceEnumerator();
-            return devices.HasDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-        }
+        private bool masterMixerEnabled(WindowsAudioHandler device) => device.HasDefaultEndpoint;
 
-        private bool isDesktop()
+        private bool isDesktop(LinuxInputHandler linInput)
         {
-            var function = new linuxFunctions(new Settings());
-            var exp = Record.Exception(() => function.getMousePosition());
+            var exp = Record.Exception(() => linInput.getMousePosition());
             if (exp != null && exp.HResult == NODESKTOP_HRESULT)
                 return false;
             return true;

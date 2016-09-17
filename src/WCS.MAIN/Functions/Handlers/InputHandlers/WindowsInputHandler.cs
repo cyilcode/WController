@@ -1,33 +1,30 @@
-﻿#if DNX451
-using WCS.MAIN.Interfaces;
-using NAudio.CoreAudioApi;
+﻿using System;
 using System.Drawing;
-using System.Windows.Forms;
-using System;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
-namespace Functions
+namespace WCS.MAIN.Functions.Handlers.InputHandlers
 {
-    public class windowsFunctions : IFunctions
+    public class WindowsInputHandler
     {
-        private const uint   MOUSEEVENTF_WHEEL      = 0x0800;
-        private const uint   MOUSEEVENTF_LEFTDOWN   = 0x0002;
-        private const uint   MOUSEEVENTF_LEFTUP     = 0x0004;
-        private const uint   MOUSEEVENTF_MIDDLEDOWN = 0x0020;
-        private const uint   MOUSEEVENTF_MIDDLEUP   = 0x0040;
-        private const uint   MOUSEEVENTF_RIGHTDOWN  = 0x0008;
-        private const uint   MOUSEEVENTF_RIGHTUP    = 0x0010;
-        private const uint   MOUSEEVENTF_HWHEEL     = 0x1000;
-        private const uint   MOUSE_CURRENT_POS      = 0;
-        private const  int   NO_MOUSE_DATA          = 0;
-        private const  int   SCROLL_UP              = 120;
-        private const  int   SCROLL_DOWN            = -120;
-        private const  int   SCROLL_LEFT            = -200;
-        private const  int   SCROLL_RIGHT           = 200;
-		private const  int 	 FUNCTION_SUCCESS		= 0;
-		private readonly object   FUNCTION_FAIL_RET = 9998;
-        private const string WIN_USER32_PATH        = "User32.dll";
-        private const string MOUSE_EVENT_EP         = "mouse_event";
+        private const uint              MOUSEEVENTF_WHEEL                  = 0x0800;
+        private const uint              MOUSEEVENTF_LEFTDOWN               = 0x0002;
+        private const uint              MOUSEEVENTF_LEFTUP                 = 0x0004;
+        private const uint              MOUSEEVENTF_MIDDLEDOWN             = 0x0020;
+        private const uint              MOUSEEVENTF_MIDDLEUP               = 0x0040;
+        private const uint              MOUSEEVENTF_RIGHTDOWN              = 0x0008;
+        private const uint              MOUSEEVENTF_RIGHTUP                = 0x0010;
+        private const uint              MOUSEEVENTF_HWHEEL                 = 0x1000;
+        private const uint              MOUSE_CURRENT_POS                  = 0;
+        private const  int              NO_MOUSE_DATA                      = 0;
+        private const  int              SCROLL_UP                          = 120;
+        private const  int              SCROLL_DOWN                        = -120;
+        private const  int              SCROLL_LEFT                        = -200;
+        private const  int              SCROLL_RIGHT                       = 200;
+		private const  int 	            FUNCTION_SUCCESS		           = 0;
+		private readonly object         FUNCTION_FAIL_RET                  = 9998;
+        private const string            WIN_USER32_PATH                    = "User32.dll";
+        private const string            MOUSE_EVENT_EP                     = "mouse_event";
 
         #region Mouse Key Simulation
 
@@ -77,54 +74,6 @@ namespace Functions
                                                IntPtr dwExt = default(IntPtr)); 
         #endregion
 
-        private MMDeviceEnumerator devices = new MMDeviceEnumerator();
-        public MMDevice defaultSoundDevice { get { return devices.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia); } }
-
-        public int VolumeDownBy(float value)
-        {
-            var minDecibels = defaultSoundDevice.AudioEndpointVolume.VolumeRange
-                                                                    .MinDecibels;
-            if ((defaultSoundDevice
-                .AudioEndpointVolume
-                .MasterVolumeLevel - value) > minDecibels)
-                defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel -= value;
-            else
-                defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel = minDecibels;
-                return FUNCTION_SUCCESS;
-        }
-        
-        public int VolumeUpBy(float value)
-        {
-            var maxDecibles = defaultSoundDevice.AudioEndpointVolume.VolumeRange
-                                                                    .MaxDecibels;
-            if ((defaultSoundDevice
-                .AudioEndpointVolume
-                .MasterVolumeLevel + value) < maxDecibles)
-                defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel += value;
-            else
-                defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel = maxDecibles;
-                return FUNCTION_SUCCESS;
-        }
-
-        public float GetVolumeLevel() => defaultSoundDevice.AudioEndpointVolume.MasterVolumeLevel;
-
-        public int isMixerMuted()
-        {
-            return Convert.ToInt32(defaultSoundDevice.AudioEndpointVolume.Mute);
-        }
-
-        public int muteMixer()
-        {
-            defaultSoundDevice.AudioEndpointVolume.Mute = true;
-            return FUNCTION_SUCCESS;
-        }
-
-        public int unmuteMixer()
-        {
-            defaultSoundDevice.AudioEndpointVolume.Mute = false;
-            return FUNCTION_SUCCESS;
-        }
-
         public Point getMousePosition() => Cursor.Position;
 
         public int setMousePosition(Point mousePoint)
@@ -143,4 +92,3 @@ namespace Functions
         }
     }
 }
-#endif

@@ -124,15 +124,6 @@
           "lib/net451/Microsoft.Extensions.PlatformAbstractions.dll": {}
         }
       },
-      "NAudio/1.7.3": {
-        "type": "package",
-        "compile": {
-          "lib/net35/NAudio.dll": {}
-        },
-        "runtime": {
-          "lib/net35/NAudio.dll": {}
-        }
-      },
       "Newtonsoft.Json/7.0.1": {
         "type": "package",
         "compile": {
@@ -145,9 +136,6 @@
       "WCS.MAIN/1.0.0-0": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
-        "dependencies": {
-          "NAudio": "1.7.3"
-        },
         "frameworkAssemblies": [
           "System.Drawing",
           "System.Windows.Forms"
@@ -385,15 +373,6 @@
           "lib/net451/Microsoft.Extensions.PlatformAbstractions.dll": {}
         }
       },
-      "NAudio/1.7.3": {
-        "type": "package",
-        "compile": {
-          "lib/net35/NAudio.dll": {}
-        },
-        "runtime": {
-          "lib/net35/NAudio.dll": {}
-        }
-      },
       "Newtonsoft.Json/7.0.1": {
         "type": "package",
         "compile": {
@@ -406,9 +385,6 @@
       "WCS.MAIN/1.0.0-0": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
-        "dependencies": {
-          "NAudio": "1.7.3"
-        },
         "frameworkAssemblies": [
           "System.Drawing",
           "System.Windows.Forms"
@@ -646,15 +622,6 @@
           "lib/net451/Microsoft.Extensions.PlatformAbstractions.dll": {}
         }
       },
-      "NAudio/1.7.3": {
-        "type": "package",
-        "compile": {
-          "lib/net35/NAudio.dll": {}
-        },
-        "runtime": {
-          "lib/net35/NAudio.dll": {}
-        }
-      },
       "Newtonsoft.Json/7.0.1": {
         "type": "package",
         "compile": {
@@ -667,9 +634,6 @@
       "WCS.MAIN/1.0.0-0": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
-        "dependencies": {
-          "NAudio": "1.7.3"
-        },
         "frameworkAssemblies": [
           "System.Drawing",
           "System.Windows.Forms"
@@ -894,21 +858,6 @@
         "Microsoft.Extensions.PlatformAbstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.PlatformAbstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.PlatformAbstractions.nuspec"
-      ]
-    },
-    "NAudio/1.7.3": {
-      "type": "package",
-      "sha512": "RfjCKqewCJ7OhVRqkVgiJv5ByPzPk5YWElyC7jLqcV2a9777HDGU00kmVzoMV9gbcNiTJn9ijVrTAgq4GeQP2w==",
-      "files": [
-        "lib/net35/NAudio.dll",
-        "lib/net35/NAudio.XML",
-        "lib/windows8/NAudio.Win8.dll",
-        "lib/windows8/NAudio.Win8.XML",
-        "license.txt",
-        "NAudio.1.7.3.nupkg",
-        "NAudio.1.7.3.nupkg.sha512",
-        "NAudio.nuspec",
-        "readme.txt"
       ]
     },
     "Newtonsoft.Json/7.0.1": {
