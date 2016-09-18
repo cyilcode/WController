@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using WCS.MAIN.Globals;
 using WCS.MAIN.Interfaces;
 
 namespace WCS.MAIN.Functions.Handlers.InputHandlers
@@ -90,6 +91,11 @@ namespace WCS.MAIN.Functions.Handlers.InputHandlers
 				return (int)FUNCTION_FAIL_RET;
             SendKeys.SendWait(key); // How i love .net devs...
             return FUNCTION_SUCCESS;
+        }
+
+        public int sendMouseEvent(COMMANDS evt)
+        {
+            throw new NotImplementedException();
         }
     }
 }

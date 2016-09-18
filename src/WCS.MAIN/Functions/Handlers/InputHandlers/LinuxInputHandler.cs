@@ -3,6 +3,7 @@ using WCS.MAIN.Globals;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System;
 
 #region typedefs
 // not needed at all but i always wanted to use these badboys :)
@@ -120,6 +121,11 @@ namespace WCS.MAIN.Functions.Handlers.InputHandlers
             }
             xdo_free(mXDO);
             return INPUT_SUCCESS;
+        }
+
+        public int sendMouseEvent(COMMANDS evt)
+        {
+            throw new NotImplementedException();
         }
     }
 }

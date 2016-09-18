@@ -15,5 +15,12 @@ namespace WCS.MAIN.Interfaces.Windows.CoreAudioAPI
         int not_implemented_8();            int not_implemented_9();
         int SetMute([MarshalAs(UnmanagedType.Bool)] bool bMute, Guid pguidEventContext = default(Guid));
         int GetMute(out bool pbMute);
+        /*
+            What are those not_implemented_x() functions?:
+            This method of API implementation requires exact order of an Interface on both sides.
+            The function definitions details are not important but the order should exaclty be the same(from top to the last function that you need. The rest are still can be skipped.)
+            Example: this interface was hooked from endpointvolume.h header.
+            Source: https://github.com/EddieRingle/portaudio/blob/master/src/hostapi/wasapi/mingw-include/endpointvolume.h#L191
+         */
     }
 }

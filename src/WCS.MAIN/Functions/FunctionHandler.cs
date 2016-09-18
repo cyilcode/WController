@@ -1,5 +1,4 @@
-﻿using WCS.MAIN.Globals;
-using WCS.MAIN.Interfaces;
+﻿using WCS.MAIN.Interfaces;
 
 namespace WCS.MAIN.Functions
 {
@@ -7,6 +6,5 @@ namespace WCS.MAIN.Functions
     {
         public IAudioHandler AudioHandler { get; set; }
         public IInputHandler InputHandler { get; set; }
-        public object FUNCTION_FAIL_RET   { get { return 9998; } }
     }
 }

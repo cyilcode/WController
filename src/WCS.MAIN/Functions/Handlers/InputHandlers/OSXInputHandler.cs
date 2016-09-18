@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Text;
 using System.Drawing;
+using System;
 
 #region typedefs
 using CGEventRef = System.IntPtr;
@@ -71,6 +72,11 @@ namespace WCS.MAIN.Functions.Handlers.InputHandlers
             CGEventPost(KCGHIDEEVENTTAP, iEvent);
             CFRelease(iEvent);
             return (int)FUNCTION_SUCCESS;
+        }
+
+        public int sendMouseEvent(COMMANDS evt)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -2,27 +2,34 @@
 {
     public enum COMMANDS
     {
-        SHUTDOWN = 0,
-        VOLUP = 1,
-        VOLDOWN = 2,
-        MUTE = 3,
-        UNMUTE = 4,
-        MOUSE_MOV_LEFT_ACTIVE = 5,
-        MOUSE_MOV_LEFT_DEACTIVE = 6,
-        MOUSE_MOV_RIGHT_ACTIVE = 7,
-        MOUSE_MOV_RIGHT_DEACTVE = 8,
-        MOUSE_MOV_UP_ACTIVE = 9,
-        MOUSE_MOV_UP_DEACTIVE = 10,
-        MOUSE_MOV_DOWN_ACTIVE = 11,
-        MOUSE_MOV_DOWN_DEACTIVE = 12,
-        MOUSE_LCLICK = 13,
-        MOUSE_RCLICK = 14
+        SHUTDOWN,
+        VOLUP,
+        VOLDOWN,
+        MUTE,
+        UNMUTE,
+        MOUSE_MOV_LEFT_ACTIVE,
+        MOUSE_MOV_LEFT_DEACTIVE,
+        MOUSE_MOV_RIGHT_ACTIVE,
+        MOUSE_MOV_RIGHT_DEACTVE,
+        MOUSE_MOV_UP_ACTIVE,
+        MOUSE_MOV_UP_DEACTIVE,
+        MOUSE_MOV_DOWN_ACTIVE,
+        MOUSE_MOV_DOWN_DEACTIVE,
+        MOUSE_LCLICK_DOWN,
+        MOUSE_LCLICK_UP,
+        MOUSE_RCLICK_DOWN,      // TODO: These commands should belong to different enums. Will implement them on Input 3/4.
+        MOUSE_RCLICK_UP,
+        MWHEEL_DOWN,
+        MWHEEL_UP,
+        MWHEEL_RIGHT,
+        MWHEEL_LEFT
     }
+
     public enum OS
     {
-        WINDOWS = 0,
-        LINUX = 1,
-        MACOSX = 2,
-        CROSSPLATFORM = 3
+        WINDOWS,
+        LINUX,
+        MACOSX,
+        CROSSPLATFORM
     }
 }

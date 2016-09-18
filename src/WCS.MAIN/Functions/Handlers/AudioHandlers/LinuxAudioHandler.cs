@@ -17,7 +17,6 @@ namespace WCS.MAIN.Functions.Handlers.AudioHandlers
         private const sbyte             RANGE_PERCENT_MAX               = 100;
         private const sbyte             RANGE_PERCENT_MIN               = 0;
         private const sbyte             INVALID_RANGE                   = -1;
-        private const sbyte             PERCENT                         = 100;
         private const sbyte             ROUND                           = 1;
         private const sbyte             ALSA_SUCCESS                    = 0;
         private const int               INDEX_ZERO                      = 0;
@@ -95,7 +94,7 @@ namespace WCS.MAIN.Functions.Handlers.AudioHandlers
                 GlobalHelper.log("snd_mixer_selem_get_playback_volume failed with errcode: " + ret);
                 return (int)FUNCTION_FAIL_RET;
             }
-            return (int)(level * PERCENT / ranges[RANGE_MAXIMUM]);
+            return (int)(level * 100 / ranges[RANGE_MAXIMUM]); // * 100 to get scalar value
         }
 
         public int isMixerMuted()
@@ -150,8 +149,8 @@ namespace WCS.MAIN.Functions.Handlers.AudioHandlers
         {
             long[] ranges = getVolumeRange();
             float level = GetVolumeLevel();
-            if (level <= RANGE_PERCENT_MIN) return ALSA_SUCCESS; // Revise here
-            var valueToSet = ((long)(level - value) * ranges[RANGE_MAXIMUM] / PERCENT) + ROUND;
+            var valueToSet = ((long)(level - value) * ranges[RANGE_MAXIMUM] / 100) + ROUND; // / 100 to get scalar value
+            if (level <= RANGE_PERCENT_MIN) valueToSet = ranges[RANGE_MINIMUM];
             ret = snd_mixer_selem_set_playback_volume_all(getMixer(), valueToSet);
             if (ret != ALSA_SUCCESS)
             {
@@ -166,9 +165,9 @@ namespace WCS.MAIN.Functions.Handlers.AudioHandlers
             long valueToSet = 0;
             long[] ranges = getVolumeRange();
             float level = GetVolumeLevel();
-            if (value >= RANGE_PERCENT_MAX) return ALSA_SUCCESS; // Revise here
+            if (value >= RANGE_PERCENT_MAX) valueToSet = ranges[RANGE_MAXIMUM];
             else
-                valueToSet = ((long)(level + value) * ranges[RANGE_MAXIMUM] / PERCENT) + ROUND;
+                valueToSet = ((long)(level + value) * ranges[RANGE_MAXIMUM] / 100) + ROUND; // / 100 to get scalar value
             ret = snd_mixer_selem_set_playback_volume_all(getMixer(), valueToSet);
             if (ret != ALSA_SUCCESS)
             {

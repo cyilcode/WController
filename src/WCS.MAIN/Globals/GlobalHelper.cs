@@ -8,6 +8,7 @@ namespace WCS.MAIN.Globals
     {
         private const string OSX_IDENTIFIER             = "Darwin";
         private const string LOG_FILE_PATH              = "error.log";
+        private const int    MAX_FILE_LENGTH            = 1000000;
 
         public void coloredLine(string message, ConsoleColor color)
         {
@@ -48,13 +49,28 @@ namespace WCS.MAIN.Globals
             }
         }
 
-        // This should stay here but i'm not gonna use this yet.
         public static void log(string log_message)
         {
+            if (File.Exists(LOG_FILE_PATH))
+            {
+                var file = new FileInfo(LOG_FILE_PATH);
+                /*
+                    Basically if our file reaches 1 megabytes or goes over it, we should archive it
+                    to keep it usable. This is not really needed but nice to have a feature like this.
+                 */
+                if (file.Length >= MAX_FILE_LENGTH)
+                {
+                    string[] explodeString = LOG_FILE_PATH.Split(':');
+                    string archivedPath = string.Format("{0}-ARCHIVED-{1}.{2}",  // explodeString[0] = filename, explodeString[1] = extension. (error and .log)
+                                                        explodeString[0],
+                                                        DateTime.Now.ToShortDateString(),
+                                                        explodeString[1]);
+                    File.Move(LOG_FILE_PATH, archivedPath); // Rename the source.
+                }
+            }
             var trace = new StackTrace().GetFrame(1).GetMethod();
             string location = string.Format("[{0} / {1}]", trace.DeclaringType.Name, trace.Name);
-            string format = string.Format("[{0}] - {1} - on function: {2}\n",DateTime.Now, log_message, location);
-            // TODO: File checking
+            string format = string.Format("[{0}] - {1} - on function: {2}\n",DateTime.Now, log_message, location);          
             File.AppendAllText(LOG_FILE_PATH, format);
         }
     }

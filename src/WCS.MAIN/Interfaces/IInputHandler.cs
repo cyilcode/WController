@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using WCS.MAIN.Globals;
 
 namespace WCS.MAIN.Interfaces
 {
@@ -19,5 +20,11 @@ namespace WCS.MAIN.Interfaces
         /// </summary>
         /// <param name="key">Key to send</param>
         int sendKeyStroke(string key);
+        /// <summary>
+        /// Executes a mouse event.
+        /// </summary>
+        /// <param name="evt">Command to execute</param>
+        /// <returns>0 on success. 9998 on fail.</returns>
+        int sendMouseEvent(COMMANDS evt);
     }
 }
