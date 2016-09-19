@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -9,18 +10,35 @@ namespace WCS.MAIN.Globals
 {
     public class serverSocket
     {
-        private readonly FunctionHandler    _functions;
-        private GlobalHelper                _gHelper;
-        private byte[] _globalBuffer        = new byte[1];
-        private const sbyte g_bArrayOffset  = 0;
-        private Socket g_sckServer          = new Socket(AddressFamily.InterNetwork, 
-                                                         SocketType.Stream, 
-                                                         ProtocolType.Tcp);
+        private readonly FunctionHandler            _functions;
+        private readonly List<Type>                 _enumTypeList;
+        private readonly Dictionary<int, Action>    _actionTable;
+        private GlobalHelper                        _gHelper;
+        private byte[] _globalBuffer                = new byte[1];
+        private const sbyte g_bArrayOffset          = 0;
+        private Socket g_sckServer                  = new Socket(AddressFamily.InterNetwork, 
+                                                                 SocketType.Stream, 
+                                                                 ProtocolType.Tcp);
 
         public serverSocket(FunctionHandler fnc, GlobalHelper hlp)
         {
             _gHelper = hlp;
             _functions = fnc;
+            _enumTypeList = new List<Type>();
+            InitEnumTypes();
+            InitActionTable();
+        }
+
+        private void InitActionTable()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void InitEnumTypes()
+        {
+            _enumTypeList.Add(typeof(OS_COMMANDS));
+            _enumTypeList.Add(typeof(INPUT_COMMANDS));
+            _enumTypeList.Add(typeof(AUDIO_COMMANDS));
         }
 
         public void startServer(IPEndPoint ipEndpoint)
