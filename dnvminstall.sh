@@ -27,7 +27,7 @@ if ! _dnvmsetup_has "curl"; then
 fi
 
 if [ -z "$DNVM_SOURCE" ]; then
-    DNVM_SOURCE="https://raw.githubusercontent.com/cyilcode/WController/master/dnvm/dnvm.sh"
+    DNVM_SOURCE="https://raw.githubusercontent.com/cyilcode/WController/script_dnvm/dnvm/dnvm.sh"
 fi
 
 # Downloading to $DNVM_DIR
