@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using WCS.MAIN.Functions;
-using WCS.MAIN.Interfaces;
 
 namespace WCS.MAIN.Globals
 {

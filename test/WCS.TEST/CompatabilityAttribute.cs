@@ -19,7 +19,7 @@ namespace WCS.TEST
         public CompatibleFactAttribute(bool requiresDesktop)
         {
             GlobalHelper        hlp      = new GlobalHelper();
-                                handler  = Utils.prepare_function_handler();
+                                handler  = hlp.prepare_platform_handler();
             platform = hlp.getOS();
 
                 if (!platformCheck(hlp))
