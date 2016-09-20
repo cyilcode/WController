@@ -16,7 +16,7 @@ namespace WCS.TEST.audioTests
 
         public audioTests()
         {
-            handler = Utils.prepare_function_handler();
+            handler = new GlobalHelper().prepare_platform_handler();
         }
 
 

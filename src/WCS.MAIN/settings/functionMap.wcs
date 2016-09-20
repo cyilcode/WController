@@ -1,0 +1,4 @@
+// WCS Function Mapping
+// Usage: Key-Handler Prop Name-Function to call|paramtype:value
+// Example: 0-AudioHandler-VolumeDownBy>float:20
+0-AudioHandler-VolumeDownBy>float:20

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -10,35 +11,20 @@ namespace WCS.MAIN.Globals
 {
     public class serverSocket
     {
-        private readonly FunctionHandler            _functions;
-        private readonly List<Type>                 _enumTypeList;
-        private readonly Dictionary<int, Action>    _actionTable;
-        private GlobalHelper                        _gHelper;
-        private byte[] _globalBuffer                = new byte[1];
-        private const sbyte g_bArrayOffset          = 0;
-        private Socket g_sckServer                  = new Socket(AddressFamily.InterNetwork, 
-                                                                 SocketType.Stream, 
-                                                                 ProtocolType.Tcp);
+        private readonly FunctionHandler                 _functions;
+        private readonly Dictionary<int, Func<object>>   _actionTable;
+        private readonly GlobalHelper                    _gHelper;
+        private byte[] _globalBuffer                     = new byte[1];
+        private const sbyte g_bArrayOffset               = 0;
+        private Socket g_sckServer                       = new Socket(AddressFamily.InterNetwork, 
+                                                                      SocketType.Stream, 
+                                                                      ProtocolType.Tcp);
 
         public serverSocket(FunctionHandler fnc, GlobalHelper hlp)
         {
-            _gHelper = hlp;
-            _functions = fnc;
-            _enumTypeList = new List<Type>();
-            InitEnumTypes();
-            InitActionTable();
-        }
-
-        private void InitActionTable()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void InitEnumTypes()
-        {
-            _enumTypeList.Add(typeof(OS_COMMANDS));
-            _enumTypeList.Add(typeof(INPUT_COMMANDS));
-            _enumTypeList.Add(typeof(AUDIO_COMMANDS));
+            _gHelper        = hlp;
+            _functions      = fnc;
+            _actionTable    = _gHelper.InitActionTable(_functions);
         }
 
         public void startServer(IPEndPoint ipEndpoint)
@@ -72,6 +58,7 @@ namespace WCS.MAIN.Globals
             var recievedBytes = inSocket.EndReceive(ar);
             // TODO: Apply commands \\
             _gHelper.coloredLine("Data arrived", ConsoleColor.White);
+            executeCommand(_globalBuffer[0]);
             // TEST
             var testResponse = Encoding.UTF8.GetBytes("TEST");
             inSocket.BeginSend(testResponse, 
@@ -80,6 +67,18 @@ namespace WCS.MAIN.Globals
                                SocketFlags.None, 
                                SocketSendCallback, inSocket);
             // TEST
+        }
+
+        private void executeCommand(byte pktHeader)
+        {
+            if (_actionTable.Keys.Contains(pktHeader))
+                _actionTable[pktHeader].Invoke();
+            else
+            {
+                string message = string.Format("Couldn't find any function mapped to {0}", pktHeader);
+                GlobalHelper.log(message);
+                _gHelper.coloredLine(message, ConsoleColor.Yellow); // for now..
+            }
         }
 
         private void SocketSendCallback(IAsyncResult ar)
