@@ -25,6 +25,6 @@ namespace WCS.MAIN.Interfaces
         /// </summary>
         /// <param name="evt">Command to execute</param>
         /// <returns>0 on success. 9998 on fail.</returns>
-        int sendMouseEvent(COMMANDS evt);
+        int sendMouseEvent(INPUT_COMMANDS evt);
     }
 }

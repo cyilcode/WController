@@ -54,4 +54,4 @@ or you can build or run the test project with:
 
  ```dnu build ./test/WCS.TEST/project.json ``` to build or  ```dnx -p ./test/WCS.TEST test ``` to run.
 
-# Development Progress - 41%
+# Development Progress - 57%

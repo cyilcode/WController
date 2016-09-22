@@ -36,7 +36,13 @@
         MWHEEL_RIGHT,
         MWHEEL_LEFT,
         KEYBOARD_KEY_PRESS_DOWN,
-        KEYBOARD_KEY_PRESS_UP
+        KEYBOARD_KEY_PRESS_UP,
+        INPUT_COMMANDS_COUNT
+    }
+
+    public enum PLUGINS
+    {
+        PLUGIN_TEST = INPUT_COMMANDS.INPUT_COMMANDS_COUNT + 1
     }
 
     public enum OS

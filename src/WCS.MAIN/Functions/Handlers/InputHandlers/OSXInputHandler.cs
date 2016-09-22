@@ -74,7 +74,7 @@ namespace WCS.MAIN.Functions.Handlers.InputHandlers
             return (int)FUNCTION_SUCCESS;
         }
 
-        public int sendMouseEvent(COMMANDS evt)
+        public int sendMouseEvent(INPUT_COMMANDS evt)
         {
             throw new NotImplementedException();
         }

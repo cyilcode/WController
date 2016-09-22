@@ -14,7 +14,7 @@ namespace WCS.MAIN.Globals
     {
         private const string OSX_IDENTIFIER             = "Darwin";
         private const string LOG_FILE_PATH              = "error.log";
-        private const string FNC_MAP_PATH               = "src/WCS.MAIN/settings/functionMap.wcs";
+        private const string FNC_MAP_PATH               = "../../src/WCS.MAIN/settings/functionMap.wcs";
         private const int    MAX_FILE_LENGTH            = 1000000;
         private const sbyte  SPLIT_PROP_LENGTH          = 3;
         private const sbyte  SPLIT_HAS_PARAMS           = 2;
@@ -87,6 +87,7 @@ namespace WCS.MAIN.Globals
         public FunctionHandler prepare_platform_handler()
         {
             FunctionHandler handler = new FunctionHandler();
+            handler.PluginHandler = new Functions.Handlers.PluginHandler("v4.0"); // we'll keep it constant right now.
             switch (getOS())
             {
                 case OS.WINDOWS:
@@ -109,6 +110,7 @@ namespace WCS.MAIN.Globals
         {
             InitTypeList();
             string[] strLines = File.ReadAllLines(FNC_MAP_PATH);
+            // This will be our table that holds the function pointers
             Dictionary<int, Func<object>> table = null;
             for (int i = 0; i < strLines.Length; i++)
             {
@@ -119,31 +121,46 @@ namespace WCS.MAIN.Globals
                     1 for Handler property
                     2 for Function name
                  */
-                string[] splitProps = strLines[i].Split('-');
+                 // Split every prop.
+                string[] ejectParams = strLines[i].Split('>'); // Split by ('>'); 0 properties string, 1 for parameters(if any).
+                string[] splitProps  = ejectParams[0].Split('-');
+                // We should have SPLIT_PROP_LENGTH props when we split the string.
                 if (splitProps.Length == SPLIT_PROP_LENGTH)
                 {
+                    // Currently(and probably always), this program won't register a key higher than a byte.
                     byte key;
                     if (!byte.TryParse(splitProps[0], out key))
                     {
                         log("Invalid key format on line: " + (i + 1));
                         continue;
                     }
-                    Type isEnumType = _typeList.FirstOrDefault(x => Enum.IsDefined(x, key));
+                    // Check if the key exists in enums.
+                    Type isEnumType = _typeList.FirstOrDefault(x => Enum.IsDefined(x, (int)key));
                     if (isEnumType == null)
                     {
                         log("Couldn't find the command key in Type table. Key: " + key);
                         continue;
                     }
-                    Type            mainHandler             = handler.GetType();
-                    PropertyInfo    functionHandlerInfo     = mainHandler.GetProperty(splitProps[1]);
-                    Object          instanceOfFncHandler    = functionHandlerInfo.GetValue(handler);
-                    string[]        ejectParams             = splitProps[2].Split('>'); // Split by ('>'); 0 for function name, 1 for parameters(if any).
-                    MethodInfo      functionInfo            = instanceOfFncHandler.GetType().GetMethod(ejectParams[0]);
+                    Object          instanceOfFncHandler    = null; // instance of the object that we seek the function.
+                    Type            mainHandler             = handler.GetType(); // basically the main FunctionHandler instance.
+                    PropertyInfo    functionHandlerInfo     = mainHandler.GetProperty(splitProps[1]);  // Get the property of the handler(the instance of handler. ex: WindowsAudioHandler)
+                    // If the prop has PC_ prefix that will indicate us that this is a plugin function. We should get the instance of it.
+                    if (isPluginClass(splitProps[1]))
+                    {
+                                    FunctionHandler hndl = (FunctionHandler)handler;
+                                    // We only send the real class name without the prefix. WARNING: filename and the class name should be the same !!
+                                    instanceOfFncHandler    = hndl.PluginHandler.getPluginInstance(splitProps[1].Substring(3));
+                    }
+                    else
+                                    instanceOfFncHandler    = functionHandlerInfo.GetValue(handler);
+
+                    MethodInfo      functionInfo            = instanceOfFncHandler.GetType().GetMethod(splitProps[2]);
                     if (functionInfo == null)
                     {
                         log("Couldn't find the function on this object instance." + functionInfo.Name);
                         continue;
                     }
+                    // Now, everything worked out perfectly so far, we can initialize our function table.
                     table = new Dictionary<int, Func<object>>();
                     List<object> parameters = new List<object>();
                     if (ejectParams.Length == SPLIT_HAS_PARAMS)
@@ -166,12 +183,29 @@ namespace WCS.MAIN.Globals
             return table;
         }
 
+        private bool isPluginClass(string propvalue)
+        {
+            string propPrefix = "PC_";
+            bool isPrefix     = true;
+            for (int i = 0; i < propPrefix.Length; i++)
+            {
+                if (propvalue[i] != propPrefix[i])
+                {
+                    isPrefix  = false;
+                    break;
+                }
+            }
+            return isPrefix;
+        }
+
         private void InitTypeList()
         {
+            _typeList = new List<Type>();
             /*TODO: Implement init from file.*/
             _typeList.Add(typeof(OS_COMMANDS));
             _typeList.Add(typeof(INPUT_COMMANDS));
             _typeList.Add(typeof(AUDIO_COMMANDS));
+            _typeList.Add(typeof(PLUGINS));
         }
     }
 }
